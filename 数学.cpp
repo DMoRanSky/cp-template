@@ -136,3 +136,49 @@ struct Mat{
 		return c;
 	}
 } res;
+
+bool inline gauss() {
+	int r, c;
+	for (r = 1, c = 1; c <= n; c++) {
+		int u = r;
+		for (int i = r + 1; i <= n; i++) if (fabs(a[i][c]) > fabs(a[u][c])) u = i;
+		if (fabs(a[u][c]) < eps) break;
+		for (int i = c; i <= n + 1; i++) swap(a[r][i], a[u][i]);
+		for (int i = n + 1; i >= c; i--) a[r][i] /= a[r][c];
+		for (int i = 1; i <= n; i++) {
+			if (i != r) {
+				for (int j = 1; j <= n + 1; j++)
+					if (j != c) a[i][j] -= a[r][j] * a[i][c];
+			}
+		}
+		r++;		
+	}
+	return r == n + 1;
+}
+
+
+// --- 行列式求值
+
+int inline det() {
+	int res = 1, v = 1;
+	for (int i = 1; i <= n; i++) {
+		int t = -1;
+		for (int j = i; j <= n; j++)
+			if (a[j][i] && (t == -1 || a[j][i] > a[t][i])) t = j;
+		if (t == -1) return 0;
+		if (i != t) swap(a[t], a[i]), v *= -1;
+		for (int j = i + 1; j <= n; j++) {
+			if (a[j][i] > a[i][i]) swap(a[j], a[i]), v *= -1;
+			while (a[j][i]) {
+				int t = a[i][i] / a[j][i];
+				for (int k = i; k <= n; k++) {
+					a[i][k] = (a[i][k] - 1ll * a[j][k] * t % P + P) % P;
+					swap(a[j][k], a[i][k]);
+				}
+				v *= -1;
+			}
+		}
+		res = (LL)res * a[i][i] % P;
+	}
+	return (LL)res * (v + P) % P;
+}
