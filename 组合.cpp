@@ -31,20 +31,3 @@ int lucas(int a, int b) {
 	return (LL)C(a % P, b % P) * lucas(a / P, b / P) % P;
 }
 
-int inline det() {
-	int res = 1, v = 1;
-	for (int i = 1; i <= n; i++) {
-		for (int j = i + 1; j <= n; j++) {
-			while (a[j][i]) {
-				int t = a[i][i] / a[j][i];
-				for (int k = i; k <= n; k++) {
-					a[i][k] = (a[i][k] - 1ll * a[j][k] * t % P + P) % P;
-					swap(a[j][k], a[i][k]);
-				}
-				v *= -1;
-			}
-		}
-		res = (LL)res * a[i][i] % P;
-	}
-	return (LL)res * (v + P) % P;
-}
