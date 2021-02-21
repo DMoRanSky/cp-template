@@ -334,7 +334,7 @@ struct LeftistTree{
 struct PAM{
 	int n, ch[SZ][26], fail[SZ], len[SZ], sz[SZ], idx = -1, lastans, last;
 
-	char s[SZ], g[SZ];
+	char s[SZ];
 
 	int inline newNode(int x) {	len[++idx] = x; return idx; }
 	int inline getFail(int x) {
