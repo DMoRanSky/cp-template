@@ -90,3 +90,25 @@ int inline minExp(int a[], int n) {
 	}
 	return min(i, j);
 }
+
+typedef unsigned long long ULL;
+
+// 哈希
+
+int b = 221;
+
+ULL p[N], h[N];
+
+int get(int l, int r){
+    return h[r] - h[l - 1] * p[r - l + 1];
+}
+
+void build(int n) {
+	p[0] = 1;
+    for(int i = 1; i <= n; i++){
+        p[i] = p[i-1] * b;
+        h[i] = h[i-1] * b + s[i];
+        sa[i] = i;
+    }
+}
+
