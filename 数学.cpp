@@ -17,15 +17,16 @@ LL inline mul(LL a, LL b, LL p) {
 }
 
 int inline CRT() {
-	LL m = 1;
+	LL m = 1; int res = 0;
 	for (int i = 1; i <= n; i++) M *= m[i];
 	for (int i = 1; i <= n; i++) {
         LL x, y;
         LL d = exgcd(M / m[i], m[i], x, y);
         LL k = m[i] / d;
         x = (x % k + k) % k;
-        ans += M / m[i] * a[i] * x;
+        res = (res + M / m[i] * a[i] * x) % M;
     }
+    return res;
 }
 
 LL inline exCRT() {
