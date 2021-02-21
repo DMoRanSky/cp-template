@@ -136,22 +136,3 @@ struct Mat{
 		return c;
 	}
 } res;
-
-bool inline gauss() {
-	int r, c;
-	for (r = 1, c = 1; c <= n; c++) {
-		int u = r;
-		for (int i = r + 1; i <= n; i++) if (fabs(a[i][c]) > fabs(a[u][c])) u = i;
-		if (fabs(a[u][c]) < eps) break;
-		for (int i = c; i <= n + 1; i++) swap(a[r][i], a[u][i]);
-		for (int i = n + 1; i >= c; i--) a[r][i] /= a[r][c];
-		for (int i = 1; i <= n; i++) {
-			if (i != r) {
-				for (int j = 1; j <= n + 1; j++)
-					if (j != c) a[i][j] -= a[r][j] * a[i][c];
-			}
-		}
-		r++;		
-	}
-	return r == n + 1;
-}
