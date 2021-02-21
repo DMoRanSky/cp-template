@@ -140,4 +140,52 @@ int lca(int x, int y) {
 }
 
 
-// ----重链剖分----
+// ---- End 重链剖分----
+
+
+// Start ：最小树形图
+
+int rt = 1, col, in[N];
+
+int vis[N], id[N], pre[N];
+
+struct E{
+    int u, v, w;
+} e[M];
+
+int inline edmonds() {
+    int ans = 0;
+    while (true) {
+        for (int i = 1; i <= n; i++) in[i] = INF;
+        memset(vis, 0, sizeof vis);
+        memset(id, 0, sizeof id);
+        for (int i = 1; i <= m; i++) 
+            if (e[i].w < in[e[i].v]) in[e[i].v] = e[i].w, pre[e[i].v] = e[i].u;
+        for (int i = 1; i <= n; i++)
+            if (in[i] == INF && i != rt) return -1;
+        col = 0;
+        for (int i = 1; i <= n; i++) {
+            if (i == rt) continue;
+            ans += in[i];
+            int v = i;
+            while (!vis[v] && !id[v] && v != rt)
+                vis[v] = i, v = pre[v];
+            if (v != rt && vis[v] == i) {
+                id[v] = ++col;
+                for (int x = pre[v]; x != v; x = pre[x]) id[x] = col;
+            }
+        }
+        if (!col) break;
+        for (int i = 1; i <= n; i++) if (!id[i]) id[i] = ++col;
+        int tot = 0;
+        for (int i = 1; i <= m; i++) {
+            int a = id[e[i].u], b = id[e[i].v];
+            if (a == b) continue;
+            e[++tot] = (E) { a, b, e[i].w - in[e[i].v] };
+        }
+        m = tot, n = col, rt = id[rt];
+    }
+    return ans;
+}
+
+// -- End
