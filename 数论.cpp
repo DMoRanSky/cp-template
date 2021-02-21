@@ -162,7 +162,13 @@ bool inline gauss() {
 int inline det() {
 	int res = 1, v = 1;
 	for (int i = 1; i <= n; i++) {
+		int t = -1;
+		for (int j = i; j <= n; j++)
+			if (a[j][i] && (t == -1 || a[j][i] > a[t][i])) t = j;
+		if (t == -1) return 0;
+		if (i != t) swap(a[t], a[i]), v *= -1;
 		for (int j = i + 1; j <= n; j++) {
+			if (a[j][i] > a[i][i]) swap(a[j], a[i]), v *= -1;
 			while (a[j][i]) {
 				int t = a[i][i] / a[j][i];
 				for (int k = i; k <= n; k++) {
