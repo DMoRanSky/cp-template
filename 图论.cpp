@@ -9,6 +9,31 @@ void add(int u, int v, int w) {
     head[u] = numE;
 }
 
+// Dijkstra
+
+typedef pair<LL, int> PII;
+ 
+priority_queue<PII, vector<PII>, greater<PII> > q;
+ 
+void dijkstra() {
+    memset(d, 0x3f, sizeof d);
+    d[1] = 0; q.push(make_pair(0, 1));
+    while(!q.empty()) {
+        PII u = q.top(); q.pop();
+        if(vis[u.second]) continue;
+        vis[u.second] = true;
+        for (int i = head[u.second]; i; i = e[i].next) {
+            int v = e[i].v;
+            if(d[u.second] + e[i].w < d[v]) {
+                d[v] = d[u.second] + e[i].w;
+                q.push(make_pair(d[v], v));
+            }
+        }
+    }
+}
+
+// Spfa
+
 // Prufer
 void inline fToP() {
 	for (int i = 1; i < n; i++) d[f[i]]++;
