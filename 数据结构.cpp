@@ -388,3 +388,15 @@ struct SAM{
 		last = x;
 	}
 }
+
+// Cdq 分治
+
+void cdq(int l, int r) {
+	if (l == r) return;
+	int mid = (l + r) >> 1;
+	cdq(l, mid), cdq(mid + 1, r);
+	// Do sth
+
+}
+
+//
