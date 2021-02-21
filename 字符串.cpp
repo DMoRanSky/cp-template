@@ -126,3 +126,19 @@ for (int i = 1, r = 0, j = 0; i <= m; i++) {
 }
 
 // End
+
+// AC 自动机
+
+struct ACAutomation{
+	int tr[SZ][26], nxt[SZ], idx;
+	void inline insert(char s[]) {
+		int p = 0;
+		for (int j = 0; s[j]; j++) {
+			int ch = s[j] - 'a';
+			if(!tr[p][ch]) tr[p][ch] = ++idx;
+			p = tr[p][ch];
+		}
+	}
+}
+
+//
