@@ -232,3 +232,56 @@ int inline query(int x, int k) {
 
 
 // --End
+
+// 费用流 EK
+
+const int N = ?, M = ?;
+
+const int INF = 0x3f3f3f3f;
+int n, m, s, t, maxflow, cost, d[N], incf[N], pre[N];
+int q[N];
+int head[N], numE = 1;
+bool vis[N];
+struct E{
+    int next, v, w, c;
+} e[M];
+void inline add(int u, int v, int w, int c) {
+    e[++numE] = (E) { head[u], v, w, c };
+    head[u] = numE;
+}
+bool spfa() {
+    memset(vis, false, sizeof vis);
+    memset(d, 0x3f, sizeof d);
+    int hh = 0, tt = 1;
+    q[0] = s; d[s] = 0; incf[s] = 2e9;
+    while (hh != tt) {
+        int u = q[hh++]; vis[u] = false;
+        if (hh == N) hh = 0;
+        for (int i = head[u]; i; i = e[i].next) {
+            int v = e[i].v;
+            if (e[i].w && d[u] + e[i].c < d[v]) {
+                d[v] = d[u] + e[i].c;
+                pre[v] = i;
+                incf[v] = min(incf[u], e[i].w);
+                if (!vis[v]) {
+                    q[tt++] = v;
+                    vis[v] = true;
+                    if (tt == N) tt = 0;
+                }
+            }
+        }
+    } 
+    return d[t] != INF;
+}
+void update() {
+    int x = t;
+    while (x != s) {
+        int i = pre[x];
+        e[i].w -= incf[t], e[i ^ 1].w += incf[t];
+        x = e[i ^ 1].v;
+    }
+    maxflow += incf[t];
+    cost += d[t] * incf[t];
+}
+
+// --End
