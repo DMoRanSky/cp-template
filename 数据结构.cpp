@@ -400,3 +400,6 @@ void cdq(int l, int r) {
 }
 
 //
+
+// 莫队
+

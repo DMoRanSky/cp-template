@@ -35,6 +35,8 @@ bool inline Right(Line a, Line b, Line c) {
     return area(a.s, a.t, u) <= 0;
 }
 
+// 凸包
+
 void inline andrew() {
     sort(p + 1, p + 1 + n);
     for (int i = 1; i <= n; i++) {
@@ -61,6 +63,7 @@ struct Line{
     int id;
 } e[N];
 
+// 半平面交
 double HPI() {
     sort(e + 1, e + 1 + n, cmp2);
     int hh = 0, tt = -1;
@@ -85,6 +88,8 @@ double HPI() {
 Point inline getCircle(Point a, Point b, Point c) {
     return Inter((a + b) / 2, rotate(b - a, PI / 2), (a + c) / 2, rotate(c - a, PI / 2));
 }
+
+// 最小圆覆盖
 
 void inline minCircle(PDD a[]) {
     random_shuffle(a + 1, a + 1 + n);
