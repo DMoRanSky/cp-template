@@ -110,5 +110,19 @@ struct Hash{
 	}
 }
 
+// Z 函数
 
+z[1] = n;
+for (int i = 2, r = 0, j = 0; i <= n; i++) {
+	if (i <= r) z[i] = min(r - i + 1, z[i - j + 1]);
+	while (i + z[i] <= n && a[i + z[i]] == a[1 + z[i]]) z[i]++;
+	if (i + z[i] - 1 > r) r = i + z[i] - 1, j = i; 
+}
 
+for (int i = 1, r = 0, j = 0; i <= m; i++) {
+	if (i <= r) p[i] = min(r - i + 1, z[i - j + 1]);
+	while (i + p[i] <= m && b[i + p[i]] == a[1 + p[i]]) p[i]++;
+	if (i + p[i] - 1 > r) r = i + p[i] - 1, j = i; 
+}
+
+// End
