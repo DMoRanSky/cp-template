@@ -233,22 +233,29 @@ int inline query(int x, int k) {
 
 // --End
 
-// 费用流 EK
+// 最小费用最大流 EK
 
 const int N = ?, M = ?;
 
 const int INF = 0x3f3f3f3f;
+
 int n, m, s, t, maxflow, cost, d[N], incf[N], pre[N];
+
 int q[N];
+
 int head[N], numE = 1;
+
 bool vis[N];
+
 struct E{
     int next, v, w, c;
 } e[M];
+
 void inline add(int u, int v, int w, int c) {
     e[++numE] = (E) { head[u], v, w, c };
     head[u] = numE;
 }
+
 bool spfa() {
     memset(vis, false, sizeof vis);
     memset(d, 0x3f, sizeof d);
