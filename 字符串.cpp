@@ -130,13 +130,26 @@ for (int i = 1, r = 0, j = 0; i <= m; i++) {
 // AC 自动机
 
 struct ACAutomation{
-	int tr[SZ][26], nxt[SZ], idx;
+	int tr[SZ][26], nxt[SZ], idx, q[SZ];
 	void inline insert(char s[]) {
 		int p = 0;
 		for (int j = 0; s[j]; j++) {
 			int ch = s[j] - 'a';
 			if(!tr[p][ch]) tr[p][ch] = ++idx;
 			p = tr[p][ch];
+		}
+	}
+	void build() {
+		int hh = 0, tt = -1;
+		for (int i = 0; i < 26; i++) 
+			if (tr[0][i]) q[++tt] = tr[0][i];
+		while (hh <= tt) {
+			int u = q[hh++];
+			for (int i = 0; i < 26; i++) {
+				int v = tr[u][i];
+				if (!v) tr[u][i] = tr[nxt[u]][i];
+				else nxt[v] = tr[nxt[u]][i], q[++tt] = v;
+			}
 		}
 	}
 }
