@@ -17,7 +17,9 @@ LL inline mul(LL a, LL b, LL p) {
 }
 
 int inline CRT() {
-	for (int i = 0; i < n; i++) {
+	LL m = 1;
+	for (int i = 1; i <= n; i++) M *= m[i];
+	for (int i = 1; i <= n; i++) {
         LL x, y;
         LL d = exgcd(M / m[i], m[i], x, y);
         LL k = m[i] / d;
