@@ -189,3 +189,46 @@ int inline edmonds() {
 }
 
 // -- End
+
+// Start : 长链剖分 + O(1) k 级祖先
+
+int d[N], dep[N];
+int g[N], son[N], fa[N][L], top[N];
+LL res;
+
+vector<int> U[N], D[N];
+
+
+void dfs1(int u) {
+    dep[u] = d[u] = d[fa[u][0]] + 1;
+    for (int i = 1; fa[u][i - 1]; i++) fa[u][i] = fa[fa[u][i - 1]][i - 1];
+    for (int i = head[u]; i; i = e[i].next) {
+        int v = e[i].v;
+        dfs1(v);
+        if (dep[v] > dep[u]) dep[u] = dep[v], son[u] = v;
+    }
+} 
+
+void dfs2(int u, int tp) {
+    top[u] = tp;
+    if (u == tp) {
+        for (int x = u, i = 0; i <= dep[u] - d[u]; i++)
+            U[u].push_back(x), x = fa[x][0];
+        for (int x = u, i = 0; i <= dep[u] - d[u]; i++)
+            D[u].push_back(x), x = son[x];
+    }
+    if (son[u]) dfs2(son[u], tp);
+    for (int i = head[u]; i; i = e[i].next) {
+        int v = e[i].v;
+        if (v != son[u]) dfs2(v, v);
+    }
+}
+
+int inline query(int x, int k) {
+    if (!k) return x;
+    x = fa[x][g[k]], k -= (1 << g[k]) + d[x] - d[top[x]], x = top[x];
+    return k < 0 ? D[x][-k] : U[x][k];
+}
+
+
+// --End
