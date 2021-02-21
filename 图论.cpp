@@ -292,3 +292,22 @@ void update() {
 }
 
 // --End
+
+// 匈牙利
+
+int match[N];
+bool vis[N];
+
+bool find(int u) {
+    for (int i = head[u]; i; i = e[i].next) {
+        int v = e[i].v;
+        if (vis[v]) continue;
+        vis[v] = true;
+        if (!match[v] || find(match[v])) {
+            match[v] = u; return true;
+        }
+    }
+    return false;
+}
+ 
+// End
