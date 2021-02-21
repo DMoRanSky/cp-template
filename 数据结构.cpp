@@ -421,40 +421,29 @@ for (int i = 1; i <= n; i++) {
 }
 
 sort(q + 1, q + 1 + m);
+
+// 回滚
+
 int l = 1, r = 0, last = -1;
 for (int i = 1; i <= m; i++) {
 	if (pos[q[i].l] == pos[q[i].r]) {
-		int s = 0;
-		for (int j = q[i].l; j <= q[i].r; j++) {
-			if (!cnt[a[j]]) cnt[a[j]] = j;
-			s = max(s, j - cnt[a[j]]);
-		}
-		ans[q[i].id] = s;
-		for (int j = q[i].l; j <= q[i].r; j++)
-			cnt[a[j]] = 0;
+		// 块内暴力
 		continue;
 	}
 	if (pos[q[i].l] != last) {
-		for (int j = 1; j <= top; j++)
-			mx[s[j]] = st[s[j]] = 0;
+		// 新的左块
 		res = 0, top = 0, r = R[pos[q[i].l]], l = r + 1;
 		last = pos[q[i].l];
 	}
 	while (r < q[i].r) {
 		++r;
-		mx[a[r]] = r;
-		if (!st[a[r]]) st[a[r]] = r, s[++top] = a[r];
-		res = max(res, r - st[a[r]]);
+		// insert r
 	}
-	int bl = l, tp = res;
+	int bl = l, tp = res; // 记录
 	while (l > q[i].l) {
 		--l;
-		if (!mx[a[l]]) mx[a[l]] = l;
-		res = max(res, mx[a[l]] - l);
+		// insert l
 	}
-	while (l < bl) {
-		if (mx[a[l]] == l) mx[a[l]] = 0;
-		l++;
-	}
+	// 恢复
 	ans[q[i].id] = res; res = tp;
 }
