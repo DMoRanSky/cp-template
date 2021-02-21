@@ -293,3 +293,40 @@ struct exBIT{
 	}
 	LL inline ask(int x, int y) { return ask(y) - ask(x - 1); }
 };
+
+// 左偏树
+
+struct LeftistTree{
+	struct T{
+	    int l, r, v, d, f;
+	    // l, r 表示左右儿子, v 表示值
+	    // d 表示从当前节点到最近叶子节点的距离, f 表示当前节点的父亲
+	} t[SZ];
+
+	int find(int x) {
+	    return t[x].f == x ? x : t[x].f = find(t[x].f);
+	}
+
+	int merge(int x, int y) { // 递归合并函数
+	    if (!x || !y) return x + y;
+	    if (t[x].v > t[y].v || (t[x].v == t[y].v && x > y)) swap(x, y);
+	    rs = merge(rs, y);
+	    if (t[ls].d < t[rs].d) swap(ls, rs);
+	    t[x].d = t[rs].d + 1;
+	    return x;
+	}
+
+	int work(int x, int y) { // 合并 x, y 两个堆。
+	    if (x == y) return 0;
+		if (!x || !y) return t[x + y].f = x + y;
+	    if (t[x].v > t[y].v || (t[x].v == t[y].v && x > y)) swap(x, y);
+	    t[x].f = t[y].f = x;
+	    merge(x, y); return x;
+	}
+
+	void del(int x) {
+	    t[x].f = work(ls, rs), t[x].v = -1;
+	}
+}
+
+// ---
