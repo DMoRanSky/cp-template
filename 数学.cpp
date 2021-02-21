@@ -182,3 +182,20 @@ int inline det() {
 	}
 	return (LL)res * (v + P) % P;
 }
+
+// 拉格朗日插值
+
+int inline Interpo(int k, int n, int x[], int y[]){
+	int res = 0;
+	for (int i = 1; i <= n; i++) {
+		int v1 = y[i], v2 = 1;
+		for (int j = 1; j <= n; j++) {
+			if (i != j) {
+				v1 = (LL) v1 * (K - x[j]) % P;
+				v2 = (LL) v2 * (x[i] - x[j]) % P;
+			}
+		}
+		res = ((res + (LL)v1 * power(v2, P - 2) % P) % P + P) % P;
+	}
+	return res;
+}
