@@ -16,6 +16,16 @@ LL inline mul(LL a, LL b, LL p) {
 	return ((a * b - (LL)((long double)a * b / p) * p) % p + p) % p;
 }
 
+int inline CRT() {
+	for (int i = 0; i < n; i++) {
+        LL x, y;
+        LL d = exgcd(M / m[i], m[i], x, y);
+        LL k = m[i] / d;
+        x = (x % k + k) % k;
+        ans += M / m[i] * a[i] * x;
+    }
+}
+
 LL inline exCRT() {
 	LL a1 = a[1], p1 = p[1];
 	for (int i = 2; i <= n; i++) {
