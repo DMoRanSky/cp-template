@@ -103,3 +103,41 @@ LL inline dinic(int u, LL flow) {
     }
     return flow - rest;
 }
+
+// ----重链剖分----
+
+int sz[SZ], fa[SZ], dep[SZ], top[SZ], hson[SZ];
+
+void dfs1(int u) {
+    sz[u] = 1;
+    for (int i = head[u]; i; i = e[i].next) {
+        int v = e[i].v;
+        if (v == fa[u]) continue;
+        dep[v] = dep[u] + 1, fa[v] = u;
+        dfs1(v);
+        sz[u] += sz[v];
+        if (sz[v] > sz[hson[u]]) hson[u] = v;
+    }
+}
+
+void dfs2(int u, int tp) {
+    top[u] = tp;
+    if (hson[u]) dfs2(hson[u], tp);
+    for (int i = head[u]; i; i = e[i].next) {
+        int v = e[i].v;
+        if (v == fa[u] || v == hson[u]) continue;
+        dfs2(v, v);
+    }
+}
+
+int lca(int x, int y) {
+    while (top[x] != top[y]) {
+        if (dep[top[x]] < dep[top[y]]) swap(x, y);
+        x = fa[top[x]];
+    }
+    if (dep[x] < dep[y]) swap(x, y);
+    return y;
+}
+
+
+// ----重链剖分----
