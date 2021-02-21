@@ -1,0 +1,295 @@
+// ST 表
+struct ST{
+	void inline STPrework(int n) {
+		g[0] = -1;
+		for (int i = 1; i <= n; i++) 
+			f[i][0] = a[i], g[i] = g[i >> 1] + 1;
+		for (int j = 1; j <= g[n]; j++)
+			for (int i = 1; i + (1 << j) - 1 <= n; i++)
+				f[i][j] = max(f[i][j - 1], f[i + (1 << (j - 1))][j - 1]);
+	}
+
+	int inline query(int l, int r) {
+		int k = g[r - l + 1];
+		return max(f[l][k], f[r - (1 << k) + 1][k]);
+	}
+}
+
+// 线性基
+struct Linear{
+	int idx = 1, tr[SZ * 32][2], cnt[SZ * 32];
+	void insert(LL x) {
+		int p = 1;
+		for (int i = 31; ~i; i--) {
+			int ch = x >> i & 1;
+			if (!tr[p][ch]) tr[p][ch] = ++idx;
+			p = tr[p][ch], cnt[p]++;
+		}
+	}
+
+	LL query(LL x, int k) {
+		int p = 1; LL res = 0;
+		for (int i = 31; ~i; i--) {
+			int ch = x >> i & 1;
+			if (k <= cnt[tr[p][!ch]]) res |= 1ll << i, p = tr[p][!ch];
+			else k -= cnt[tr[p][!ch]], p = tr[p][ch];
+		}
+		return res;
+	}
+}
+
+// 普通线段树
+
+struct Seg{
+	void inline pushup(int p) {
+		
+	}
+
+	void inline pushdown(int p, int l, int r, int mid) {
+	
+	}
+
+	void build(int p, int l, int r) {
+		if(l == r) { 
+			return; 
+		}
+		int mid = (l + r) >> 1;
+	    build(p << 1, l, mid);
+	    build(p << 1 | 1, mid + 1, r);
+	    pushup(p);
+	}
+
+	void change(int p, int l, int r, int x, int y, int k, int c) {
+	    if(x <= l && r <= y) {
+	        return ;
+	    }
+		int mid = (l + r) >> 1;
+		pushdown(p, l, r, mid);
+		if(x <= mid) change(p << 1, l, mid, x, y, k, c);
+		if(mid + 1 <= y) change(p << 1 | 1, mid + 1, r, x, y, k, c);
+		pushup(p);
+	}
+
+	int query(int p, int l, int r, int x, int y) {
+		if(x <= l && r <= y) return ?;
+		int mid = (l + r) >> 1, s = 0;
+		pushdown(p, l, r, mid);
+		if(x <= mid) s += query(p << 1, l, mid, x, y);
+		if(mid + 1 <= y) s += query(p << 1 | 1, mid + 1, r, x, y);
+		return s % P;
+	}
+}
+
+// 用来动态开点的池
+struct T{
+	int l, r, val, rnd, sz;
+} t[SZ];
+int idx;
+
+
+struct Fhq{
+	int rt;
+	void pushup(int p) {
+		
+	}
+	// value(A) < value(B)
+	int merge(int A, int B) {
+		if (!A || !B) return A + B;
+		else if(t[A].rnd > t[B].rnd) {
+			t[A].r = merge(t[A].r, B);
+			pushup(A);
+			return A;
+		} else {
+			t[B].l = merge(A, t[B].l);
+			pushup(B);
+			return B;
+		}
+	}
+
+	// 按值分裂
+	void split(int p, int k, int &x, int &y) {
+		if (!p) x = y = 0;
+		else {
+			if (t[p].val <= k) 
+			x = p, split(t[p].r, k, t[p].r, y);
+			else y = p, split(t[p].l, k, x, t[p].l);
+			pushup(p);
+		}
+	}
+	int getNode(int val) {
+		t[++idx] = (T) { 0, 0, val, rand(), 1 };
+		return idx;
+	}
+
+	void insert(int val) {
+		int x, y;
+		split(rt, val, x, y);
+		rt = merge(merge(x, getNode(val)), y);
+	}
+
+	int get(int l, int r) {
+		int x, y, z;
+		split(rt, l - 1, x, y);
+		split(y, r, y, z);
+		int res = t[y].N;
+		rt = merge(x, merge(y, z));
+		return res;
+	}
+
+	void del(int val) {
+		int x, y, z;
+		split(rt, val - 1, x, y);
+		split(y, val, y, z);
+		y = merge(t[y].l, t[y].r);
+		rt = merge(x, merge(y, z));
+	}
+}
+
+struct LCT{
+	int ch[N][2], fa[N], mx[N], w[N], rev[N];
+
+	void inline pushup(int p) {
+		
+	}
+
+	void inline pushdown(int p) {
+		if (rev[p]) { swap(ls, rs), rev[ls] ^= 1, rev[rs] ^= 1, rev[p] = 0; }
+	}
+
+	void inline rotate(int x) {
+		int y = fa[x], z = fa[y], k = get(x);
+		if (!isRoot(y)) ch[z][get(y)] = x;
+		ch[y][k] = ch[x][!k], fa[ch[y][k]] = y;
+		ch[x][!k] = y, fa[y] = x, fa[x] = z;
+		pushup(y); pushup(x);
+	}
+
+	void inline update(int p) {
+		if (!isRoot(p)) update(fa[p]);
+		pushdown(p);
+	}
+
+	void inline splay(int p) {
+		update(p);
+		for (int f = fa[p]; !isRoot(p); rotate(p), f = fa[p]) 
+			if (!isRoot(f)) rotate(get(p) == get(f) ? f : p);
+	}
+
+	void inline access(int x) {
+		for (int p = 0; x; p = x, x = fa[x]) {
+			splay(x), ch[x][1] = p, pushup(x);
+		}
+	}
+
+	int inline find(int p) {
+		access(p), splay(p);
+		while (ls) pushdown(p), p = ls;
+		splay(p);
+		return p;
+	}
+
+	void inline makeRoot(int x) {
+		access(x), splay(x), rev[x] ^= 1;
+	}
+
+	void inline split(int x, int y) {
+		makeRoot(x), access(y), splay(y);
+	}
+
+	void inline link(int x, int y) {
+		makeRoot(x), fa[x] = y;
+	}
+
+	void inline cut(int x, int y) {
+		split(x, y);
+		ch[y][0] = 0, fa[x] = 0;
+		pushup(y);
+	}
+
+}
+
+// 主席树
+struct PersisSeg{
+	struct T{
+		int l, r;
+		LL v;
+	} t[SZ];
+
+	int rt[SZ], idx;
+
+	void inline update(int &p, int q, int l, int r, int x, int k) {
+		t[p = ++idx] = t[q];
+		t[p].v += k;
+		if (l == r) return;
+		int mid = (l + r) >> 1;
+		if (x <= mid) update(t[p].l, t[q].l, l, mid, x, k);
+		else update(t[p].r, t[q].r, mid + 1, r, x, k);
+	}
+
+	LL inline query(int p, int l, int r, int x, int y) {
+		if (!p || x > y) return 0;
+		if (x <= l && r <= y) return t[p].v;
+		int mid = (l + r) >> 1; LL res = 0;
+		if (x <= mid) res += query(t[p].l, l, mid, x, y);
+		if (mid < y) res += query(t[p].r, mid + 1, r, x, y);
+		return res;
+	}
+}
+
+
+// 并查集
+struct DSU{
+	int f[N], sz[N];
+	void init(int n) { for (int i = 1; i <= n; i++) f[i] = i, sz[i] = 1; }
+	int inline find(int x) { return f[x] == x ? x : f[x] = find(f[x]); }
+	void inline merge(int x, int y) {
+		x = find(x), y = find(y);
+		if (x == y) return;
+		if (sz[x] > sz[y]) swap(x, y);
+		sz[y] += sz[x], f[x] = y;
+	}
+};
+
+// 树状数组
+
+struct BIT{
+	int n;
+	LL c[SZ];
+	void inline init(int len, LL a[]) {
+		n = len;
+		for (int i = 1; i <= n; i++) {
+			c[i] += a[i];
+			if (i + (i & -i) <= n) c[i + (i & -i)] += c[i];
+		}
+	}
+	void inline add(int x, LL k) {
+		for (; x <= n; x += x & -x) c[x] += k;
+	}
+	LL inline ask(int x) {
+		LL res = 0;
+		for (; x; x -= x & -x) res += c[x];
+		return res;
+	}
+} ;
+
+// 区间加 区间查的树状数组
+struct exBIT{
+	BIT t1, t2;
+	int n;
+	void inline init(int len, int a[]) {
+		n = len;
+		for (int i = 1; i <= n; i++) 
+			b[i] = a[i] - a[i - 1];
+		t1.init(n, b);
+		for (int i = 1; i <= n; i++) b[i] *= i;
+		t2.init(n, b);
+	}
+	void inline add(int l, int r, LL c) {
+		t1.add(l, c), t1.add(r + 1, -c);
+		t2.add(l, c * l), t2.add(r + 1, -c * (r + 1));
+	}
+	LL inline ask(int x) {
+		return (x + 1) * t1.ask(x) - t2.ask(x);
+	}
+	LL inline ask(int x, int y) { return ask(y) - ask(x - 1); }
+};

@@ -1,0 +1,105 @@
+int head[N], numE = 1;
+
+struct E{
+    int next, v, w;
+} e[M << 1];
+
+void add(int u, int v, int w) {
+    e[++numE] = (E) { head[u], v, w };
+    head[u] = numE;
+}
+
+// Prufer
+void inline fToP() {
+	for (int i = 1; i < n; i++) d[f[i]]++;
+	for (int i = 1, j = 1; i <= n - 2; j++) {
+		while (d[j]) j++;
+		p[i++] = f[j];
+		while (i <= n - 2 && --d[p[i - 1]] == 0 && p[i - 1] < j) p[i++] = f[p[i - 1]];
+	}
+}
+
+void inline pToF() {
+    for (int i = 1; i <= n - 2; i++) d[p[i]]++;
+    p[n - 1] = n;
+    for (int i = 1, j = 1; i < n; i++, j++) {
+    	while (d[j]) j++;
+    	f[j] = p[i];
+    	while (i < n - 1 && --d[p[i]] == 0 && p[i] < j) f[p[i]] = p[i + 1], ++i;
+    }
+}
+
+// 有向图 tarjan
+
+void tarjan(int u) {
+    dfn[u] = low[u] = ++dfncnt;
+    s[++top] = u, ins[u] = true;
+    for (int i = head[u]; i; i = e[i].next) {
+        int v = e[i].v;
+        if (!dfn[v]) {
+            tarjan(v), low[u] = min(low[u], low[v]);
+        } else if (ins[v]) low[u] = min(low[u], dfn[v]);
+    }
+    if (low[u] == dfn[u]) {
+        int v; ++cnt;
+        do {
+            v = s[top--], ins[v] = false, col[v] = cnt;
+        } while (v != u);
+    }
+}
+
+bool spfa(int s) {
+    memset(d, 0x3f, sizeof d);
+    d[1] = 0;
+    int hh = 0, tt = 0;
+    q[0] = s;
+    
+    while(!q.empty()){
+        int u = q[hh++];
+        vis[u] = false;
+        for(int i = head[u]; i; i = e[i].next){
+            int v = e[i].v;
+            if(d[u] + e[i].d < d[v]){
+                d[v] = d[u] + e[i].d;
+                cnt[v] = cnt[u] + 1;
+                if(cnt[v] >= n) return false;
+                if(!vis[v]) vis[v] = true, q.push(v);
+            }
+        }
+    }
+    return true;
+}
+
+// 最大流
+bool inline bfs() {
+    int hh = 0, tt = -1;
+    memset(d, 0, sizeof d);
+    q[++tt] = s, d[s] = 1, cur[s] = head[s];
+    while (hh <= tt) {
+        int u = q[hh++];
+        for (int i = head[u]; i; i = e[i].next) {
+            int v = e[i].v;
+            if (!d[v] && e[i].w) {
+                cur[v] = head[v];
+                q[++tt] = v, d[v] = d[u] + 1;
+                if (v == t) return true;
+            }
+        }
+    }
+    return false;
+}
+
+LL inline dinic(int u, LL flow) {
+    if (u == t) return flow;
+    LL rest = flow;
+    for (int i = cur[u]; i && rest; i = e[i].next) {
+        cur[u] = i;
+        int v = e[i].v;
+        if (e[i].w && d[v] == d[u] + 1) {
+            int k = dinic(v, min((LL)e[i].w, rest));
+            if (!k) d[v] = 0;
+            rest -= k, e[i].w -= k, e[i ^ 1].w += k;
+        }
+    }
+    return flow - rest;
+}
