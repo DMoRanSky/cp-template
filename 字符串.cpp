@@ -96,18 +96,16 @@ typedef unsigned long long ULL;
 // 哈希
 
 struct Hash{
-	int b = 221, P;
-	int p[N], h[N];
-	int get(int l, int r){
+	int b, P, p[N], h[N];
+	int inline get(int l, int r){
 	    return (h[r] - (LL)h[l - 1] * p[r - l + 1] % P + P) % P;
 	}
-	void build(int n, int tb, int tp) {
+	void inline build(int n, int tb, int tp) {
 		b = tb, P = tp;
 		p[0] = 1;
 	    for(int i = 1; i <= n; i++){
 	        p[i] = (LL)p[i - 1] * b % P;
 	        h[i] = ((LL)h[i - 1] * b + s[i]) % P;
-	        sa[i] = i;
 	    }
 	}
 }
