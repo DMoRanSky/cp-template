@@ -73,27 +73,6 @@ void tarjan(int u) {
     }
 }
 
-bool spfa(int s) {
-    memset(d, 0x3f, sizeof d);
-    d[1] = 0;
-    int hh = 0, tt = 0;
-    q[0] = s;
-    
-    while(!q.empty()){
-        int u = q[hh++];
-        vis[u] = false;
-        for(int i = head[u]; i; i = e[i].next){
-            int v = e[i].v;
-            if(d[u] + e[i].d < d[v]){
-                d[v] = d[u] + e[i].d;
-                cnt[v] = cnt[u] + 1;
-                if(cnt[v] >= n) return false;
-                if(!vis[v]) vis[v] = true, q.push(v);
-            }
-        }
-    }
-    return true;
-}
 
 // 最大流
 bool inline bfs() {
@@ -281,6 +260,7 @@ void inline add(int u, int v, int w, int c) {
     head[u] = numE;
 }
 
+// Spfa || 
 bool spfa() {
     memset(vis, false, sizeof vis);
     memset(d, 0x3f, sizeof d);
@@ -305,6 +285,7 @@ bool spfa() {
     } 
     return d[t] != INF;
 }
+
 void update() {
     int x = t;
     while (x != s) {
