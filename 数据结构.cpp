@@ -403,3 +403,58 @@ void cdq(int l, int r) {
 
 // 莫队
 
+int pos[N], L[N], R[N], t;
+
+struct Q {
+	int l, r, id;
+	bool operator < (const Q &b) const {
+		if (pos[l] != pos[b.l]) return pos[l] < pos[b.l];
+		return r < b.r;
+	}
+} q[N];
+
+t = sqrt(n);
+for (int i = 1; i <= n; i++) {
+	pos[i] = (i - 1) / t + 1;
+	if (!L[pos[i]]) L[pos[i]] = i;
+	R[pos[i]] = i;
+}
+
+sort(q + 1, q + 1 + m);
+int l = 1, r = 0, last = -1;
+for (int i = 1; i <= m; i++) {
+	if (pos[q[i].l] == pos[q[i].r]) {
+		int s = 0;
+		for (int j = q[i].l; j <= q[i].r; j++) {
+			if (!cnt[a[j]]) cnt[a[j]] = j;
+			s = max(s, j - cnt[a[j]]);
+		}
+		ans[q[i].id] = s;
+		for (int j = q[i].l; j <= q[i].r; j++)
+			cnt[a[j]] = 0;
+		continue;
+	}
+	if (pos[q[i].l] != last) {
+		for (int j = 1; j <= top; j++)
+			mx[s[j]] = st[s[j]] = 0;
+		res = 0, top = 0, r = R[pos[q[i].l]], l = r + 1;
+		last = pos[q[i].l];
+	}
+	while (r < q[i].r) {
+		++r;
+		mx[a[r]] = r;
+		if (!st[a[r]]) st[a[r]] = r, s[++top] = a[r];
+		res = max(res, r - st[a[r]]);
+	}
+	int bl = l, tp = res;
+	while (l > q[i].l) {
+		--l;
+		if (!mx[a[l]]) mx[a[l]] = l;
+		res = max(res, mx[a[l]] - l);
+	}
+	while (l < bl) {
+		if (mx[a[l]] == l) mx[a[l]] = 0;
+		l++;
+	}
+	ans[q[i].id] = res; res = tp;
+}
