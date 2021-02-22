@@ -264,8 +264,12 @@ void inline init(int n) {
 
 int n, m, a[N];
 
-MpeBuild(int p, int l, int r) {
+Poly b[N];
 
+void MpeBuild(int p, int l, int r) {
+	if (l == r) { b[p].resize(2); b[p][0] = P - a[r], b[p][1] = 1; return; }
+	int mid = (l + r) >> 1;
+	
 }
 
 int main() {
