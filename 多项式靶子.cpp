@@ -292,6 +292,10 @@ void MpeEva(int n, int m, Poly f, int X[], int Y[]) {
 	for (int i = 1; i <= m; i++) Y[i] = by[i];
 }
 
+Poly polyInterpo(int n, int X[], int Y[]) {
+	
+}
+
 int n, x[N], y[N];
 
 // _End_
