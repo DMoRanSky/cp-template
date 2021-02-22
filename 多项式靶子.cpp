@@ -286,6 +286,7 @@ void MpeSolve(int p, int l, int r, Poly a) {
 }
 
 int main() {
+	freopen("/Users/xiangyufan/Downloads/P5050_1.in", "r", stdin);
 	scanf("%d%d", &n, &m); init(2 * n);
 	Poly f(n + 1, 0);
 	for (int i = 0; i <= n; i++) scanf("%d", &f[i]);
