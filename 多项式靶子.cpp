@@ -264,5 +264,9 @@ int n, m;
 
 int main() {
 	scanf("%d%d", &n, &m);
+	Poly f(n + 1, 0), g(m + 1, 0);
+	for (int i = 0; i <= n; i++) scanf("%d", f + i);
+	for (int i = 0; i <= m; i++) scanf("%d", g + i);
+	Poly Q, R; div(f, g, Q, R);
 	return 0;
 }
