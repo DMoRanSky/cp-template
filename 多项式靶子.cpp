@@ -264,7 +264,7 @@ void inline init(int n) {
 
 // 多点求值
 
-int n, m, x[N], y[N];
+int x[N], y[N];
 
 Poly b[N];
 
@@ -294,8 +294,7 @@ void MpeEva(int n, int m, Poly f, int X[], int Y[]) {
 
 // _End_
 int main() {
-	scanf("%d%d", &n, &m); init(2 * n);
-	Poly f(n + 1, 0);
+	scanf("%d", &n); init(2 * n);
 	for (int i = 0; i <= n; i++) scanf("%d", &f[i]);
 	for (int i = 1; i <= m; i++) scanf("%d", x + i);
 	MpeBuild(1, 1, m);
