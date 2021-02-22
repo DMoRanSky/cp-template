@@ -35,6 +35,16 @@ namespace Red{
 		return (Num) { (int)(((LL)a.x * b.x + (LL)I * a.y % P * b.y) % P) , (int)(((LL)a.x * b.y + (LL)a.y * b.x) % P) }; 
 	}
 
+	int inline power(int a, int b, int Mod = P) {
+		int res = 1;
+		while (b) {
+			if (b & 1) res = (LL)res * a % Mod;
+			a = (LL)a * a % Mod;
+			b >>= 1;
+		}
+		return res;
+	}
+
 
 	Num inline power(Num a, int b) {
 		Num res = (Num) { 1, 0 };
