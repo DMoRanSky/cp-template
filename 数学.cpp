@@ -347,3 +347,33 @@ void inline SubConv(int n, int a[], int b[], int c[]) {
 	for (int i = 0; i <= n; i++) OR(1 << n, h[i], -1);
 	for (int i = 0; i < (1 << n); i++) c[i] = h[get(i)][i];
 }
+
+// 矩阵求逆
+
+
+bool inline matInv(int n, int a[N][N], int b[N][N]) {
+	int c[N][N << 1];
+	memset(c, 0, sizeof c);
+	for (int i = 1; i <= n; i++) {
+		for (int j = 1; j <= n; j++) c[i][j] = a[i][j];
+		c[i][i + n] = 1;
+	}
+	for (int i = 1; i <= n; i++) {
+		int t = -1;
+		for (int j = i; j <= n; j++) if (c[j][i]) t = j;
+		if (t == -1) return false;
+		if (t != i) swap(c[t], c[i]);
+		int inv = power(c[i][i], P - 2);
+		for (int j = 1; j <= 2 * n; j++) c[i][j] = (LL)c[i][j] * inv % P;
+		for (int j = 1; j <= n; j++) {
+			if (i == j) continue;
+			int v = c[j][i];
+			if (!v) continue;
+			for (int k = 1; k <= 2 * n; k++)
+				c[j][k] = (c[j][k] - (LL)c[i][k] * v % P + P) % P;
+		}
+	}
+	for (int i = 1; i <= n; i++)
+		for (int j = 1; j <= n; j++) b[i][j] = c[i][j + n];
+	return true;
+}
