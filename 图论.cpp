@@ -320,55 +320,118 @@ bool find(int u) {
 
 // 点分治
 
-void dfs0(int u, int fa, int S) {
-    sz[u] = 1; int val = 0;
+void getRoot(int u, int last) {
+    sz[u] = 1;
+    int s = 0;
     for (int i = head[u]; i; i = e[i].next) {
         int v = e[i].v;
-        if (v == fa || erase[v]) continue;
-        dfs0(v, u, S);
+        if (vis[v] || v == last) continue;
+        getRoot(v, u);
         sz[u] += sz[v];
-        val = max(val, sz[v]);
+        s = max(s, sz[v]);
     }
-    val = max(val, S - sz[u]);
-    if(val < maxPart) maxPart = val, pos = u;
+    s = max(s, S - sz[u]);
+    if (s < maxPart)
+        maxPart = s, rt = u;
 }
 
-int getRoot(int S, int x) {
-    maxPart = 2e9;
-    dfs0(x, 0, S);
-    return pos;
-}
-
-
-
-void dfs(int u, int fa) {
-    a[++tot] = u;
-    for (int j = 1; j <= m; j++) {
-        if(d[u] <= K[j] && st[K[j] - d[u]]) ans[j] = true;
-    }
+void dfs(int u, int last, int col, int w, int dep) {
+    maxDep = max(maxDep, dep);
+    if (L <= dep && dep <= R)
+        ans = max(ans, w);
+    d[dep] = max(d[dep], w);
     for (int i = head[u]; i; i = e[i].next) {
         int v = e[i].v;
-        if(v == fa || erase[v]) continue;
-        d[v] = d[u] + e[i].w;
-        dfs(v, u);
+        if (v == last || vis[v])
+            continue;
+        dfs(v, u, e[i].w, w + (col == e[i].w ? 0 : c[e[i].w]), dep + 1);
     }
 }
 
-void solve(int n, int u) {
-    d[u] = tot = 0; erase[u] = st[0] = true;
+void dfs0(int u, int last, int dep) {
+    maxDep = max(maxDep, dep);
     for (int i = head[u]; i; i = e[i].next) {
         int v = e[i].v;
-        if(erase[v]) continue;
-        int last = tot + 1;
-        d[v] = e[i].w;
-        dfs(v, u);
-        for (int j = last; j <= tot; j++) st[d[a[j]]] = true; 
-    }
-    for (int i = 1; i <= tot; i++) st[d[a[i]]] = false;
-    for (int i = head[u]; i; i = e[i].next) {
-        int v = e[i].v;
-        if(!erase[v]) solve(sz[v], getRoot(sz[v], v));
+        if (v == last || vis[v])
+            continue;
+        dfs0(v, u, dep + 1);
     }
 }
 
-solve(n, getRoot(n, 1));
+int inline work(int a[], int len1, int b[], int len2) {
+    int res = -INF;
+
+    int hh = 0, tt = -1;
+    int l = max(1, L - 1), r = R - 1;
+    if (l > r)
+        return res;
+    len1 = min(len1, R - 1);
+    for (int i = min(r, len2); i >= l; i--) {
+        while (hh <= tt && b[q[tt]] < b[i]) tt--;
+        q[++tt] = i;
+    }
+    if (hh <= tt)
+        res = max(res, a[1] + b[q[hh]]);
+    for (int i = 2; i <= len1; i++) {
+        if (q[hh] == r)
+            hh++;
+        r--;
+        if (l > 1) {
+            --l;
+            while (hh <= tt && b[q[tt]] < b[l]) tt--;
+            q[++tt] = l;
+        }
+        if (hh <= tt)
+            res = max(res, a[i] + b[q[hh]]);
+    }
+
+    return res;
+}
+
+void solve(int x) {
+    if (S == 1)
+        return;
+    maxPart = 2e9, getRoot(x, 0), vis[rt] = true;
+    tot = 0;
+    for (int i = head[rt]; i; i = e[i].next) {
+        int v = e[i].v;
+        if (vis[v])
+            continue;
+        maxDep = 0;
+        dfs0(v, rt, 1);
+        mxDep[e[i].w] = max(mxDep[e[i].w], maxDep);
+        sons[++tot] = (Son){ v, e[i].w, maxDep };
+    }
+    sort(sons + 1, sons + 1 + tot);
+    zDep = 0;
+    int nowDep = 0;
+    for (int i = 1; i <= tot; i++) {
+        maxDep = 0, now = c[sons[i].c];
+        mxDep[e[i].w] = 0;
+        dfs(sons[i].x, rt, sons[i].c, c[sons[i].c], 1);
+        zDep = max(zDep, maxDep);
+        nowDep = max(nowDep, maxDep);
+        ans = max(ans, work(d, maxDep, nowVal, nowDep) - c[sons[i].c]);
+        for (int j = 1; j <= maxDep; j++) {
+            nowVal[j] = max(nowVal[j], d[j]);
+            d[j] = -INF;
+        }
+        if (i == tot || sons[i].c != sons[i + 1].c) {
+            ans = max(ans, work(nowVal, nowDep, val, zDep));
+            for (int j = 1; j <= nowDep; j++) {
+                val[j] = max(val[j], nowVal[j]);
+                nowVal[j] = -INF;
+            }
+            nowDep = 0;
+        }
+    }
+    for (int i = 1; i <= zDep; i++) val[i] = -INF;
+    for (int i = head[rt]; i; i = e[i].next) {
+        int v = e[i].v;
+        if (vis[v])
+            continue;
+        S = sz[v], solve(v);
+    }
+}
+
+// End
