@@ -279,14 +279,17 @@ void MpeBuild(int p, int l, int r) {
 void MpeSolve(int p, int l, int r, Poly a) {
 	Poly Q, R; div(a, b[p], Q, R);
 	a = R;
-	if (l == r) { }
+	if (l == r) { y[r] = a[0]; return; }
+	int mid = (l + r) >> 1;
+	MpeSolve(p << 1, l, mid, a);
+	MpeSolve(p << 1 | 1, mid + 1, r, a);
 }
 
 int main() {
 	scanf("%d%d", &n, &m); init(2 * n);
 	Poly f(n + 1, 0);
 	for (int i = 0; i <= n; i++) scanf("%d", &f[i]);
-	for (int i = 1; i <= m; i++) scanf("%d", x + i)
+	for (int i = 1; i <= m; i++) scanf("%d", x + i);
 	MpeBuild(1, 1, m);
 	MpeSolve(1, 1, m, f);
 	for (int i = 1; i <= m; i++) printf("%d\n", y[i]);
