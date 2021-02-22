@@ -212,3 +212,92 @@ int inline Interpo(int k, int n, int x[], int y[]){
 	}
 	return res;
 }
+
+// Min25
+
+int inv2 = power(2, P - 2), inv6 = power(6, P - 2);
+
+// 求 g_k 函数: <= x 的和
+int inline getS(LL x, int k) {
+	if (k == 1) return (x % P * (x % P + 1ll) % P * inv2 + P - 1ll)  % P;
+	if (k == 2) return (P - 1ll + x % P * (x % P + 1ll) % P * (2ll * x % P + 1) % P * inv6) % P;
+}
+
+int inline getV(LL x, int k) {
+	if (k == 1) return x % P;
+	if (k == 2) return (LL)x % P * x % P;
+}
+
+bool vis[M];
+
+int primes[M], tot;
+
+void inline linear(int n) {
+	for (int i = 2; i <= n; i++) {
+		if (!vis[i]) primes[++tot] = i;
+		for (int j = 1; primes[j] <= n / i; j++) {
+			vis[i * primes[j]] = true;
+			if (i % primes[j] == 0) break;
+		}
+	}
+}
+
+// 预处理 g_k 处所有 n / i 形式的质数前缀和
+
+struct MP1{
+	int m, g[M], pos1[M], pos2[M], len, id;
+	LL n, d[M];
+	int inline getPos(LL x) {
+		return x <= m ? pos1[x] : pos2[n / x];
+	}
+	void inline add(LL v) {
+		d[++len] = v;
+		g[len] = getS(v, id);
+		if (v <= m) pos1[v] = len;
+		else pos2[n / v] = len; 
+	}
+	void build(LL sum, int t) {
+		m = sqrt(n = sum); id = t;
+		for (LL i = 1, j; i <= n; i = j + 1) {
+			LL v = n / i; j = n / v;
+			if (v <= m) break;
+			add(v);
+		}
+		for (int i = m; i; i--) add(i);
+		for (int i = 1; i <= tot && (LL)primes[i] * primes[i] <= n; i++) {
+			LL pr = primes[i];
+			for (int j = 1; j <= len && pr * pr <= d[j]; j++) {
+				int k = getPos(d[j] / pr);
+				g[j] = (g[j] - (LL)getV(pr, id) * (g[k] - g[getPos(primes[i - 1])] + P) % P + P) % P;
+			}
+		}
+	}
+	int inline s(LL x) { return g[getPos(x)]; }
+} t1, t2;
+
+int inline get(LL x) {
+	return (t2.s(x) - t1.s(x) + P) % P;
+}
+
+int inline calc(LL x) {
+	return x % P * (x % P - 1ll + P) % P;
+}
+
+void inline add(int &x, int y) {
+	(x += y) %= P;
+}
+
+int inline s(LL n, int t) {
+	if (primes[t] >= n) return 0;
+	int ans = (get(n) - get(primes[t]) + P) % P;
+	for (int i = t + 1; i <= tot && (LL)primes[i] * primes[i] <= n; i++) {
+		int pr = primes[i];
+		LL v = pr;
+		for (int j = 1; v <= n; v = v * pr, j++) {
+			add(ans, (LL)calc(v) * ((j != 1) + s(n / v, i)) % P);
+		}
+	}
+	return ans;
+}
+
+//---
