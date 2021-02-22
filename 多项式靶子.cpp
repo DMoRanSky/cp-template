@@ -114,18 +114,10 @@ Poly inline mul (Poly a, Poly b, int newn = -1) {
 	return d;
 }
 
-Poly inline rev(Poly a) {
+Poly inline reverse(Poly a) {
 	int n = a.size() - 1;
 	for (int i = 0; i < n - i; i++) swap(a[i], a[n - i]);
 	return a;
-}
-
-void inline div (Poly a, Poly b, Poly &Q, Poly &R) {
-	int n = a.size() - 1, m = b.size() - 1;
-	Poly ar = rev(a), br = rev(b);
-	ar.resize(n - m + 1), br.resize(n - m + 1);
-	Q = rev(mul(br, polyInv(br, n - m + 1)));
-	R = a - mul(b, Q);
 }
 
 Poly inline dx(Poly a) {
@@ -155,6 +147,16 @@ Poly polyInv(Poly a) {
 	b.resize(n);
 	return b;
 }
+
+
+void inline div (Poly a, Poly b, Poly &Q, Poly &R) {
+	int n = a.size() - 1, m = b.size() - 1;
+	Poly ar = reverse(a), br = reverse(b);
+	ar.resize(n - m + 1), br.resize(n - m + 1);
+	Q = reverse(mul(br, polyInv(br), n - m + 1));
+	R = a - mul(b, Q);
+}
+
 
 Poly t(1, 1);
 
@@ -258,7 +260,9 @@ void inline init(int n) {
 	}
 }
 
-int main() {
+int n, m;
 
+int main() {
+	scanf("%d%d", &n, &m);
 	return 0;
 }
