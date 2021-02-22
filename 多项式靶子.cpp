@@ -151,9 +151,8 @@ Poly polyInv(Poly a) {
 
 void inline div (Poly a, Poly b, Poly &Q, Poly &R) {
 	int n = a.size() - 1, m = b.size() - 1;
-	Poly ar = a, br = b;
+	Poly ar = reverse(a), br = reverse(b);
 	ar.resize(n - m + 1), br.resize(n - m + 1);
-	ar = reverse(ar), br = reverse(br);
 	Q = reverse(mul(br, polyInv(br), n - m + 1));
 	R = a - mul(b, Q);
 }
