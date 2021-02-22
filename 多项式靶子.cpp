@@ -120,10 +120,12 @@ Poly inline rev(Poly a) {
 	return a;
 }
 
-Poly inline div (Poly a, Poly b) {
+void inline div (Poly a, Poly b, Poly &Q, Poly &R) {
 	int n = a.size() - 1, m = b.size() - 1;
 	Poly ar = rev(a), br = rev(b);
 	ar.resize(n - m + 1), br.resize(n - m + 1);
+	Q = rev(mul(br, polyInv(br, n - m + 1)));
+	R = a - mul(b, Q);
 }
 
 Poly inline dx(Poly a) {
