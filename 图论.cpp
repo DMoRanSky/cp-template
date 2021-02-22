@@ -335,97 +335,16 @@ void getRoot(int u, int last) {
         maxPart = s, rt = u;
 }
 
-void dfs(int u, int last, int col, int w, int dep) {
-    maxDep = max(maxDep, dep);
-    if (L <= dep && dep <= R)
-        ans = max(ans, w);
-    d[dep] = max(d[dep], w);
-    for (int i = head[u]; i; i = e[i].next) {
-        int v = e[i].v;
-        if (v == last || vis[v])
-            continue;
-        dfs(v, u, e[i].w, w + (col == e[i].w ? 0 : c[e[i].w]), dep + 1);
-    }
-}
-
-void dfs0(int u, int last, int dep) {
-    maxDep = max(maxDep, dep);
-    for (int i = head[u]; i; i = e[i].next) {
-        int v = e[i].v;
-        if (v == last || vis[v])
-            continue;
-        dfs0(v, u, dep + 1);
-    }
-}
-
-int inline work(int a[], int len1, int b[], int len2) {
-    int res = -INF;
-
-    int hh = 0, tt = -1;
-    int l = max(1, L - 1), r = R - 1;
-    if (l > r)
-        return res;
-    len1 = min(len1, R - 1);
-    for (int i = min(r, len2); i >= l; i--) {
-        while (hh <= tt && b[q[tt]] < b[i]) tt--;
-        q[++tt] = i;
-    }
-    if (hh <= tt)
-        res = max(res, a[1] + b[q[hh]]);
-    for (int i = 2; i <= len1; i++) {
-        if (q[hh] == r)
-            hh++;
-        r--;
-        if (l > 1) {
-            --l;
-            while (hh <= tt && b[q[tt]] < b[l]) tt--;
-            q[++tt] = l;
-        }
-        if (hh <= tt)
-            res = max(res, a[i] + b[q[hh]]);
-    }
-
-    return res;
-}
-
 void solve(int x) {
-    if (S == 1)
-        return;
+    if (S == 1) return;
     maxPart = 2e9, getRoot(x, 0), vis[rt] = true;
-    tot = 0;
     for (int i = head[rt]; i; i = e[i].next) {
         int v = e[i].v;
         if (vis[v])
             continue;
-        maxDep = 0;
-        dfs0(v, rt, 1);
-        mxDep[e[i].w] = max(mxDep[e[i].w], maxDep);
-        sons[++tot] = (Son){ v, e[i].w, maxDep };
+        // Do sth
     }
-    sort(sons + 1, sons + 1 + tot);
-    zDep = 0;
-    int nowDep = 0;
-    for (int i = 1; i <= tot; i++) {
-        maxDep = 0, now = c[sons[i].c];
-        mxDep[e[i].w] = 0;
-        dfs(sons[i].x, rt, sons[i].c, c[sons[i].c], 1);
-        zDep = max(zDep, maxDep);
-        nowDep = max(nowDep, maxDep);
-        ans = max(ans, work(d, maxDep, nowVal, nowDep) - c[sons[i].c]);
-        for (int j = 1; j <= maxDep; j++) {
-            nowVal[j] = max(nowVal[j], d[j]);
-            d[j] = -INF;
-        }
-        if (i == tot || sons[i].c != sons[i + 1].c) {
-            ans = max(ans, work(nowVal, nowDep, val, zDep));
-            for (int j = 1; j <= nowDep; j++) {
-                val[j] = max(val[j], nowVal[j]);
-                nowVal[j] = -INF;
-            }
-            nowDep = 0;
-        }
-    }
-    for (int i = 1; i <= zDep; i++) val[i] = -INF;
+    // Core
     for (int i = head[rt]; i; i = e[i].next) {
         int v = e[i].v;
         if (vis[v])
