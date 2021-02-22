@@ -262,11 +262,11 @@ void inline init(int n) {
 	}
 }
 
+// 多点求值
+
 int n, m, x[N], y[N];
 
 Poly b[N];
-
-// 多点求值
 
 void MpeBuild(int p, int l, int r) {
 	if (l == r) { b[p].resize(2); b[p][0] = P - x[r], b[p][1] = 1; return; }
@@ -285,8 +285,8 @@ void MpeSolve(int p, int l, int r, Poly a) {
 	MpeSolve(p << 1 | 1, mid + 1, r, a);
 }
 
+// _End_
 int main() {
-	freopen("/Users/xiangyufan/Downloads/P5050_1.in", "r", stdin);
 	scanf("%d%d", &n, &m); init(2 * n);
 	Poly f(n + 1, 0);
 	for (int i = 0; i <= n; i++) scanf("%d", &f[i]);
