@@ -212,7 +212,7 @@ Poly t(1, 1);
 
 Poly sqrt(Poly a) {
 	int n = a.size();
-	if (n == 1) { Poly k; k.resize(1); k[0] = Red::Sqrt(a[0], P); return k } 
+	if (n == 1) { Poly k; k.resize(1); k[0] = Red::Sqrt(a[0], P); return k; } 
 	Poly b = a; b.resize((n + 1) >> 1);
 	b = sqrt(b), b.resize(n);
 	Poly c = polyInv(b);
