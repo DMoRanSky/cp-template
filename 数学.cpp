@@ -377,3 +377,47 @@ bool inline matInv(int n, int a[N][N], int b[N][N]) {
 		for (int j = 1; j <= n; j++) b[i][j] = c[i][j + n];
 	return true;
 }
+
+// St:
+
+namespace Red{
+	int MOD, I;
+
+	struct Num{
+		int x, y;
+	};
+
+	Num operator * (const Num a, const Num b) {
+		return (Num) { (int)(((LL)a.x * b.x + (LL)I * a.y % P * b.y) % P) , (int)(((LL)a.x * b.y + (LL)a.y * b.x) % P) }; 
+	}
+
+
+	Num inline power(Num a, int b) {
+		Num res = (Num) { 1, 0 };
+		while (b) {
+			if (b & 1) res = res * a;
+			a = a * a;
+			b >>= 1;
+		}
+		return res;
+	}
+
+	int inline EulerCri(int x) {
+		return power(x, (MOD - 1) >> 1, MOD);
+	}
+
+	void inline Sqrt(int n) {
+		if (n == 0) { puts("0"); return; }
+		if (EulerCri(n) == P - 1) { puts("Hola!"); return ; }
+		int a = rand() % P, t;
+		while (EulerCri(t = ((LL)a * a + MOD - n) % P) != MOD - 1) a = rand() % MOD;
+		I = t;
+		int x0 = power((Num) { a, 1 }, (P + 1) >> 1).x;
+		int y0 = P - x0;
+		if (x0 > y0) swap(x0, y0);
+		printf("%d %d\n", x0, y0);
+	}	
+}
+
+
+// _end
