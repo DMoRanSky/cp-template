@@ -152,8 +152,7 @@ Poly polyInv(Poly a) {
 void inline div (Poly a, Poly b, Poly &Q, Poly &R) {
 	int n = a.size() - 1, m = b.size() - 1;
 	Poly ar = reverse(a), br = reverse(b);
-	//ar.resize(n - m + 1);
-	br.resize(n - m + 1);
+	ar.resize(n - m + 1), br.resize(n - m + 1);
 	Q = reverse(mul(ar, polyInv(br), n - m + 1));
 	R = a - mul(b, Q);
 }
@@ -264,7 +263,7 @@ void inline init(int n) {
 int n, m;
 
 int main() {
-	scanf("%d%d", &n, &m);
+	scanf("%d%d", &n, &m); init(2 * n);
 	Poly f(n + 1, 0), g(m + 1, 0);
 	for (int i = 0; i <= n; i++) scanf("%d", &f[i]);
 	for (int i = 0; i <= m; i++) scanf("%d", &g[i]);
