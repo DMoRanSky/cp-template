@@ -278,6 +278,7 @@ void MpeBuild(int p, int l, int r) {
 
 void MpeSolve(int p, int l, int r, Poly a) {
 	Poly Q, R; div(a, b[p], Q, R);
+	cout << r - l + 1 << " " << a.size() << " " << b[p].size() << " " << R.size() << endl;
 	a = R;
 	if (l == r) { y[r] = a[0]; return; }
 	int mid = (l + r) >> 1;
