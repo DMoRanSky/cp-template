@@ -262,20 +262,24 @@ void inline init(int n) {
 	}
 }
 
-int n, m, a[N];
+int n, m, x[N], y[N];
 
 Poly b[N];
 
 void MpeBuild(int p, int l, int r) {
-	if (l == r) { b[p].resize(2); b[p][0] = P - a[r], b[p][1] = 1; return; }
+	if (l == r) { b[p].resize(2); b[p][0] = P - x[r], b[p][1] = 1; return; }
 	int mid = (l + r) >> 1;
-	
+	MpeBuild(p << 1, l, mid);
+	MpeBuild(p << 1 | 1, mid + 1, r);
+	b[p] = mul(b[p << 1], b[p << 1 | 1]);
 }
 
 int main() {
 	scanf("%d%d", &n, &m); init(2 * n);
 	Poly f(n + 1, 0);
 	for (int i = 0; i <= n; i++) scanf("%d", &f[i]);
-	for (int i = 1; i <= m; i++) scanf("%d", a + i)
+	for (int i = 1; i <= m; i++) scanf("%d", x + i)
+	MpeBuild(1, 1, m);
+	M
 	return 0;
 }
