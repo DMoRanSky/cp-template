@@ -292,11 +292,18 @@ void MpeEva(int n, int m, Poly f, int X[], int Y[]) {
 	for (int i = 1; i <= m; i++) Y[i] = by[i];
 }
 
+// 快速插值
+
+void InterSolve(int p, int l, int r) {
+	
+}
+
 Poly polyInterpo(int n, int X[], int Y[]) {
 	for (int i = 1; i <= n; i++) bx[i] = X[i];
 	MpeBuild(1, 1, n);
 	Poly f = dx(b[1]);
 	MpeSolve(1, 1, n, f);
+	InterSolve(1, 1, n);
 }
 
 int n, x[N], y[N];
