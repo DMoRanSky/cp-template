@@ -406,16 +406,15 @@ namespace Red{
 		return power(x, (MOD - 1) >> 1, MOD);
 	}
 
-	void inline Sqrt(int n) {
-		if (n == 0) { puts("0"); return; }
-		if (EulerCri(n) == P - 1) { puts("Hola!"); return ; }
+	int inline Sqrt(int n, int o) {
+		MOD = o;
+		if (n == 0) return 0;
+		if (EulerCri(n) == P - 1) return -1;
 		int a = rand() % P, t;
 		while (EulerCri(t = ((LL)a * a + MOD - n) % P) != MOD - 1) a = rand() % MOD;
 		I = t;
 		int x0 = power((Num) { a, 1 }, (P + 1) >> 1).x;
-		int y0 = P - x0;
-		if (x0 > y0) swap(x0, y0);
-		printf("%d %d\n", x0, y0);
+		return min(x0, P - x0);
 	}	
 }
 
