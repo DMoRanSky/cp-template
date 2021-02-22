@@ -8,7 +8,7 @@ typedef long long LL;
 typedef vector<int> Poly;
 
 
-const int N = 4e5 + 5, P = 998244353, G = 3;
+const int N = 8e5 + 5, P = 998244353, G = 3;
 
 int A[N], rev[N], mod, inv[N], fact[N], infact[N];
 int lim = 1, len = 0, W[20][N];
@@ -84,10 +84,10 @@ Poly operator + (const Poly a, const Poly b)  {
 	Poly c(max(a.size(), b.size()));
 	for (int i = 0; i < c.size(); i++) {
 		if (i < a.size()) {
-			c[i] += a[i]; if (c[i] > P) c[i] -= P;
+			c[i] += a[i]; if (c[i] >= P) c[i] -= P;
 		}
 		if (i < b.size()) {
-			c[i] += b[i]; if (c[i] > P) c[i] -= P;
+			c[i] += b[i]; if (c[i] >= P) c[i] -= P;
 		}
 	}
 	return c;
@@ -98,7 +98,7 @@ Poly operator - (const Poly a, const Poly b)  {
 	Poly c(max(a.size(), b.size()));
 	for (int i = 0; i < c.size(); i++) {
 		if (i < a.size()) {
-			c[i] += a[i]; if (c[i] > P) c[i] -= P;
+			c[i] += a[i]; if (c[i] >= P) c[i] -= P;
 		}
 		if (i < b.size()) {
 			c[i] -= b[i]; if (c[i] < 0) c[i] += P;
@@ -314,9 +314,10 @@ Poly polyInterpo(int n, int X[], int Y[]) {
 	return bc[1];
 }
 
+// _End_
+
 int n, x[N], y[N];
 
-// _End_
 int main() {
 	scanf("%d", &n); init(2 * n);
 	for (int i = 1; i <= n; i++) scanf("%d%d", x + i, y + i);
