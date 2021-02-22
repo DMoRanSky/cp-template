@@ -268,5 +268,9 @@ int main() {
 	for (int i = 0; i <= n; i++) scanf("%d", f + i);
 	for (int i = 0; i <= m; i++) scanf("%d", g + i);
 	Poly Q, R; div(f, g, Q, R);
+	for (int i = 0; i <= n - m + 1) printf("%d ", Q[i]);
+	puts("");
+	R.resize(m);
+	for (int i = 0; i < m; i++) printf("%d ", R[i]);
 	return 0;
 }
