@@ -264,12 +264,12 @@ void inline init(int n) {
 
 // 多点求值
 
-int x[N], y[N];
+int bx[N], by[N];
 
 Poly b[N];
 
 void MpeBuild(int p, int l, int r) {
-	if (l == r) { b[p].resize(2); b[p][0] = P - x[r], b[p][1] = 1; return; }
+	if (l == r) { b[p].resize(2); b[p][0] = P - bx[r], b[p][1] = 1; return; }
 	int mid = (l + r) >> 1;
 	MpeBuild(p << 1, l, mid);
 	MpeBuild(p << 1 | 1, mid + 1, r);
@@ -279,26 +279,24 @@ void MpeBuild(int p, int l, int r) {
 void MpeSolve(int p, int l, int r, Poly a) {
 	Poly Q, R; 
 	if (a.size() >= b[p].size()) div(a, b[p], Q, R), a = R;
-	if (l == r) { y[r] = a[0]; return; }
+	if (l == r) { by[r] = a[0]; return; }
 	int mid = (l + r) >> 1;
 	MpeSolve(p << 1, l, mid, a);
 	MpeSolve(p << 1 | 1, mid + 1, r, a);
 }
 
 void MpeEva(int n, int m, Poly f, int X[], int Y[]) {
-	for (int i = 1; i <= m; i++) x[i] = X[i];
+	for (int i = 1; i <= m; i++) bx[i] = X[i];
 	MpeBuild(1, 1, m);
 	MpeSolve(1, 1, m, f);
-	for (int i = 1; i <= m; i++) Y[i] = y[i];
+	for (int i = 1; i <= m; i++) Y[i] = by[i];
 }
+
+int n, x[N], y[N];
 
 // _End_
 int main() {
 	scanf("%d", &n); init(2 * n);
-	for (int i = 0; i <= n; i++) scanf("%d", &f[i]);
-	for (int i = 1; i <= m; i++) scanf("%d", x + i);
-	MpeBuild(1, 1, m);
-	MpeSolve(1, 1, m, f);
-	for (int i = 1; i <= m; i++) printf("%d\n", y[i]);
+	for (int i = 1; i <= n; i++) scanf("%d%d", x + i, y + i);
 	return 0;
 }
