@@ -121,7 +121,9 @@ Poly inline rev(Poly a) {
 }
 
 Poly inline div (Poly a, Poly b) {
+	int n = a.size() - 1, m = b.size() - 1;
 	Poly ar = rev(a), br = rev(b);
+	ar.resize(n - m + 1), br.resize(n - m + 1);
 }
 
 Poly inline dx(Poly a) {
