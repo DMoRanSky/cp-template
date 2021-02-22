@@ -285,6 +285,8 @@ void MpeSolve(int p, int l, int r, Poly a) {
 	MpeSolve(p << 1 | 1, mid + 1, r, a);
 }
 
+
+
 // _End_
 int main() {
 	scanf("%d%d", &n, &m); init(2 * n);
