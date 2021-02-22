@@ -293,7 +293,7 @@ void MpeEva(int n, int m, Poly f, int X[], int Y[]) {
 }
 
 Poly polyInterpo(int n, int X[], int Y[]) {
-	
+
 }
 
 int n, x[N], y[N];
@@ -302,5 +302,7 @@ int n, x[N], y[N];
 int main() {
 	scanf("%d", &n); init(2 * n);
 	for (int i = 1; i <= n; i++) scanf("%d%d", x + i, y + i);
+	Poly res = polyInterpo(n, x, y);
+	for (int i = 0; i < n; i++) printf("%d ", res[i]);
 	return 0;
 }
