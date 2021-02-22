@@ -244,3 +244,7 @@ void inline init(int n) {
 	}
 }
 
+int main() {
+
+	return 0;
+}
