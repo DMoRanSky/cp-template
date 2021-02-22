@@ -150,7 +150,7 @@ Poly polyInv(Poly a) {
 	return b;
 }
 
-
+// 注意必须保证 n >= m
 void inline div (Poly a, Poly b, Poly &Q, Poly &R) {
 	int n = a.size() - 1, m = b.size() - 1;
 	Poly ar = reverse(a), br = reverse(b);
@@ -277,8 +277,8 @@ void MpeBuild(int p, int l, int r) {
 }
 
 void MpeSolve(int p, int l, int r, Poly a) {
-	Poly Q, R; div(a, b[p], Q, R);
-	a = R;
+	Poly Q, R; 
+	if (a.size() > b[p].size()) div(a, b[p], Q, R), a = R;
 	if (l == r) { y[r] = a[0]; return; }
 	int mid = (l + r) >> 1;
 	MpeSolve(p << 1, l, mid, a);
@@ -286,7 +286,6 @@ void MpeSolve(int p, int l, int r, Poly a) {
 }
 
 int main() {
-	freopen("/Users/xiangyufan/Downloads/P5050_8.in", "r", stdin);
 	scanf("%d%d", &n, &m); init(2 * n);
 	Poly f(n + 1, 0);
 	for (int i = 0; i <= n; i++) scanf("%d", &f[i]);
