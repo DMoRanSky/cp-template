@@ -114,6 +114,10 @@ Poly inline mul (Poly a, Poly b, int newn = -1) {
 	return d;
 }
 
+Poly inline div (Poly a, Poly b) {
+	
+}
+
 Poly inline dx(Poly a) {
 	int n = a.size();
 	Poly b; b.resize(n - 1);
