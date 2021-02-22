@@ -285,7 +285,12 @@ void MpeSolve(int p, int l, int r, Poly a) {
 	MpeSolve(p << 1 | 1, mid + 1, r, a);
 }
 
-
+void MpeEva(int n, int m, Poly f, int X[], int Y[]) {
+	for (int i = 1; i <= m; i++) x[i] = X[i];
+	MpeBuild(1, 1, m);
+	MpeSolve(1, 1, m, f);
+	for (int i = 1; i <= m; i++) Y[i] = y[i];
+}
 
 // _End_
 int main() {
