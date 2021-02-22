@@ -156,7 +156,7 @@ void inline div (Poly a, Poly b, Poly &Q, Poly &R) {
 	Poly ar = reverse(a), br = reverse(b);
 	ar.resize(n - m + 1), br.resize(n - m + 1);
 	Q = reverse(mul(ar, polyInv(br), n - m + 1));
-	R = a - mul(b, Q);
+	R = a - mul(b, Q); R.resize(m)
 }
 
 
@@ -278,8 +278,8 @@ void MpeBuild(int p, int l, int r) {
 
 void MpeSolve(int p, int l, int r, Poly a) {
 	Poly Q, R; div(a, b[p], Q, R);
-	cout << r - l + 1 << " " << a.size() << " " << b[p].size() << " " << R.size() << endl;
 	a = R;
+	cout << r - l + 1 << " " << a.size() << " " << b[p].size() << " " << R.size() << endl;
 	if (l == r) { y[r] = a[0]; return; }
 	int mid = (l + r) >> 1;
 	MpeSolve(p << 1, l, mid, a);
