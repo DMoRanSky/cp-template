@@ -317,3 +317,58 @@ bool find(int u) {
 }
  
 // End
+
+// 点分治
+
+void dfs0(int u, int fa, int S) {
+    sz[u] = 1; int val = 0;
+    for (int i = head[u]; i; i = e[i].next) {
+        int v = e[i].v;
+        if (v == fa || erase[v]) continue;
+        dfs0(v, u, S);
+        sz[u] += sz[v];
+        val = max(val, sz[v]);
+    }
+    val = max(val, S - sz[u]);
+    if(val < maxPart) maxPart = val, pos = u;
+}
+
+int getRoot(int S, int x) {
+    maxPart = 2e9;
+    dfs0(x, 0, S);
+    return pos;
+}
+
+
+
+void dfs(int u, int fa) {
+    a[++tot] = u;
+    for (int j = 1; j <= m; j++) {
+        if(d[u] <= K[j] && st[K[j] - d[u]]) ans[j] = true;
+    }
+    for (int i = head[u]; i; i = e[i].next) {
+        int v = e[i].v;
+        if(v == fa || erase[v]) continue;
+        d[v] = d[u] + e[i].w;
+        dfs(v, u);
+    }
+}
+
+void solve(int n, int u) {
+    d[u] = tot = 0; erase[u] = st[0] = true;
+    for (int i = head[u]; i; i = e[i].next) {
+        int v = e[i].v;
+        if(erase[v]) continue;
+        int last = tot + 1;
+        d[v] = e[i].w;
+        dfs(v, u);
+        for (int j = last; j <= tot; j++) st[d[a[j]]] = true; 
+    }
+    for (int i = 1; i <= tot; i++) st[d[a[i]]] = false;
+    for (int i = head[u]; i; i = e[i].next) {
+        int v = e[i].v;
+        if(!erase[v]) solve(sz[v], getRoot(sz[v], v));
+    }
+}
+
+solve(n, getRoot(n, 1));
