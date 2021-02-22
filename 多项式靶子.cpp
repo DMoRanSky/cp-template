@@ -212,7 +212,7 @@ Poly t(1, 1);
 
 Poly sqrt(Poly a) {
 	int n = a.size();
-	if (n == 1) { Poly k; k.resize(1); k[0] = Red::Sqrt(a[0], P); } 
+	if (n == 1) { Poly k; k.resize(1); k[0] = Red::Sqrt(a[0], P); return k } 
 	Poly b = a; b.resize((n + 1) >> 1);
 	b = sqrt(b), b.resize(n);
 	Poly c = polyInv(b);
@@ -364,12 +364,13 @@ Poly polyInterpo(int n, int X[], int Y[]) {
 
 // _End_
 
-int n, x[N], y[N];
+int n;
 
 int main() {
 	scanf("%d", &n); init(2 * n);
-	for (int i = 1; i <= n; i++) scanf("%d%d", x + i, y + i);
-	Poly res = polyInterpo(n, x, y);
-	for (int i = 0; i < n; i++) printf("%d ", res[i]);
+	Poly f(n, 0);
+	for (int i = 0; i < n; i++) scanf("%d", &f[i]);
+	f = sqrt(f);
+	for (int i = 0; i < n; i++) printf("%d ", f[i]);
 	return 0;
 }
