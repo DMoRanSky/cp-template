@@ -114,8 +114,14 @@ Poly inline mul (Poly a, Poly b, int newn = -1) {
 	return d;
 }
 
+Poly inline rev(Poly a) {
+	int n = a.size() - 1;
+	for (int i = 0; i < n - i; i++) swap(a[i], a[n - i]);
+	return a;
+}
+
 Poly inline div (Poly a, Poly b) {
-	
+	Poly ar = rev(a), br = rev(b);
 }
 
 Poly inline dx(Poly a) {
