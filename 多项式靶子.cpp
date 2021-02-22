@@ -8,7 +8,7 @@ typedef long long LL;
 typedef vector<int> Poly;
 
 
-const int N = 8e5 + 5, P = 998244353, G = 3;
+const int N = 5e5 + 5, P = 998244353, G = 3;
 
 int A[N], rev[N], mod, inv[N], fact[N], infact[N];
 int lim = 1, len = 0, W[20][N];
