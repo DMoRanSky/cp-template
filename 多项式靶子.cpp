@@ -24,6 +24,44 @@ int inline power(int a, int b, int Mod = P) {
 }
 
 
+namespace Red{
+	int MOD, I;
+
+	struct Num{
+		int x, y;
+	};
+
+	Num operator * (const Num a, const Num b) {
+		return (Num) { (int)(((LL)a.x * b.x + (LL)I * a.y % P * b.y) % P) , (int)(((LL)a.x * b.y + (LL)a.y * b.x) % P) }; 
+	}
+
+
+	Num inline power(Num a, int b) {
+		Num res = (Num) { 1, 0 };
+		while (b) {
+			if (b & 1) res = res * a;
+			a = a * a;
+			b >>= 1;
+		}
+		return res;
+	}
+
+	int inline EulerCri(int x) {
+		return power(x, (MOD - 1) >> 1, MOD);
+	}
+
+	int inline Sqrt(int n, int o) {
+		MOD = o;
+		if (n == 0) return 0;
+		if (EulerCri(n) == P - 1) return -1;
+		int a = rand() % P, t;
+		while (EulerCri(t = ((LL)a * a + MOD - n) % P) != MOD - 1) a = rand() % MOD;
+		I = t;
+		int x0 = power((Num) { a, 1 }, (P + 1) >> 1).x;
+		return min(x0, P - x0);
+	}	
+}
+
 int Gi = power(G, P - 2, P), inv2 = power(2, P - 2, P);
 
 
@@ -164,7 +202,7 @@ Poly t(1, 1);
 
 Poly sqrt(Poly a) {
 	int n = a.size();
-	if (n == 1) return t; 
+	if (n == 1) { Poly k; k.resize(1); k[0] = Red::Sqrt(a[0], P); } 
 	Poly b = a; b.resize((n + 1) >> 1);
 	b = sqrt(b), b.resize(n);
 	Poly c = polyInv(b);
