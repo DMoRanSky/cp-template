@@ -297,10 +297,10 @@ void MpeEva(int n, int m, Poly f, int X[], int Y[]) {
 Poly bc[N];
 
 void InterSolve(int p, int l, int r) {
-	if (l == r) { bc[p].resize(1); bc[p][0] = by[i]; return; }
+	if (l == r) { bc[p].resize(1); bc[p][0] = by[r]; return; }
 	int mid = (l + r) >> 1;
-	InterSolve(p << 1, l, mid, a);
-	InterSolve(p << 1 | 1, mid + 1, r, a);
+	InterSolve(p << 1, l, mid);
+	InterSolve(p << 1 | 1, mid + 1, r);
 	bc[p] = mul(bc[p << 1], b[p << 1 | 1]) + mul(bc[p << 1 | 1], b[p << 1]);
 }
 
@@ -311,6 +311,7 @@ Poly polyInterpo(int n, int X[], int Y[]) {
 	MpeSolve(1, 1, n, f);
 	for (int i = 1; i <= n; i++) by[i] = (LL)Y[i] * power(by[i], P - 2) % P;
 	InterSolve(1, 1, n);
+	return bc[1];
 }
 
 int n, x[N], y[N];
