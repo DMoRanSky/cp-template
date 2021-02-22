@@ -262,17 +262,16 @@ void inline init(int n) {
 	}
 }
 
-int n, m;
+int n, m, a[N];
+
+MpeBuild(int p, int l, int r) {
+
+}
 
 int main() {
 	scanf("%d%d", &n, &m); init(2 * n);
-	Poly f(n + 1, 0), g(m + 1, 0);
+	Poly f(n + 1, 0);
 	for (int i = 0; i <= n; i++) scanf("%d", &f[i]);
-	for (int i = 0; i <= m; i++) scanf("%d", &g[i]);
-	Poly Q, R; div(f, g, Q, R);
-	for (int i = 0; i <= n - m; i++) printf("%d ", Q[i]);
-	puts("");
-	R.resize(m);
-	for (int i = 0; i < m; i++) printf("%d ", R[i]);
+	for (int i = 1; i <= m; i++) scanf("%d", a + i)
 	return 0;
 }
