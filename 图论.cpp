@@ -318,39 +318,33 @@ bool find(int u) {
  
 // End
 
-// 点分治
+// 点分治 / 树
 
-void getRoot(int u, int last) {
-    sz[u] = 1;
-    int s = 0;
+int val;
+
+void findRoot(int u, int last, int &rt) {
+    sz[u] = 1; int s = 0;
     for (int i = head[u]; i; i = e[i].next) {
         int v = e[i].v;
-        if (vis[v] || v == last) continue;
-        getRoot(v, u);
-        sz[u] += sz[v];
-        s = max(s, sz[v]);
+        if (st[v] || v == last) continue;
+        findRoot(v, u, rt);
+        sz[u] += sz[v], s = max(s, sz[v]);
     }
     s = max(s, S - sz[u]);
-    if (s < maxPart)
-        maxPart = s, rt = u;
+    if (s < val) val = s, rt = u;
 }
 
-void solve(int x) {
-    if (S == 1) return;
-    maxPart = 2e9, getRoot(x, 0), vis[rt] = true;
-    for (int i = head[rt]; i; i = e[i].next) {
+void solve(int u) {
+    if (st[u]) return;
+    val = INF, findRoot(u, 0, u), st[u] = true;
+    for (int i = head[u], j = 0; i; i = e[i].next) {
         int v = e[i].v;
-        if (vis[v])
-            continue;
+        if (st[v]) continue;
         // Do sth
     }
-    // Core
-    for (int i = head[rt]; i; i = e[i].next) {
-        int v = e[i].v;
-        if (vis[v])
-            continue;
-        S = sz[v], solve(v);
-    }
+    for (int i = head[u]; i; i = e[i].next) S = sz[e[i].v], solve(e[i].v);
 }
+
+S = n, solve(1);
 
 // End
