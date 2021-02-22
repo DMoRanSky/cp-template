@@ -244,14 +244,14 @@ void inline init(int n) {
 	}
 }
 
-void inline OR(int a[], int o) {
+void inline OR(int n, int a[], int o) {
 	for (int w = 1; w < n; w <<= 1) 
 		for (int i = 0; i < n; i += (w << 1)) 
 			for (int j = 0; j < w; j++)
 				add(a[i + j + w], o * a[i + j]);
 }
 
-void inline AND(int a[], int o) {
+void inline AND(int n, int a[], int o) {
 	for (int w = 1; w < n; w <<= 1) 
 		for (int i = 0; i < n; i += (w << 1)) 
 			for (int j = 0; j < w; j++)
@@ -260,7 +260,7 @@ void inline AND(int a[], int o) {
 
 
 // 反向传 1/2
-void inline XOR(int a[], int o) {
+void inline XOR(int n, int a[], int o) {
 	for (int w = 1; w < n; w <<= 1) 
 		for (int i = 0; i < n; i += (w << 1)) 
 			for (int j = 0; j < w; j++) {
