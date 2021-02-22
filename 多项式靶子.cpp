@@ -266,6 +266,8 @@ int n, m, x[N], y[N];
 
 Poly b[N];
 
+// 多点求值
+
 void MpeBuild(int p, int l, int r) {
 	if (l == r) { b[p].resize(2); b[p][0] = P - x[r], b[p][1] = 1; return; }
 	int mid = (l + r) >> 1;
@@ -274,12 +276,19 @@ void MpeBuild(int p, int l, int r) {
 	b[p] = mul(b[p << 1], b[p << 1 | 1]);
 }
 
+void MpeSolve(int p, int l, int r, Poly a) {
+	Poly Q, R; div(a, b[p], Q, R);
+	a = R;
+	if (l == r) { }
+}
+
 int main() {
 	scanf("%d%d", &n, &m); init(2 * n);
 	Poly f(n + 1, 0);
 	for (int i = 0; i <= n; i++) scanf("%d", &f[i]);
 	for (int i = 1; i <= m; i++) scanf("%d", x + i)
 	MpeBuild(1, 1, m);
-	M
+	MpeSolve(1, 1, m, f);
+	for (int i = 1; i <= m; i++) printf("%d\n", y[i]);
 	return 0;
 }
