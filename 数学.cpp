@@ -17,7 +17,7 @@ LL inline mul(LL a, LL b, LL p) {
 }
 
 int inline CRT() {
-	LL m = 1; int res = 0;
+	LL M = 1; int res = 0;
 	for (int i = 1; i <= n; i++) M *= m[i];
 	for (int i = 1; i <= n; i++) {
         LL x, y;
