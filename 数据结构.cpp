@@ -447,3 +447,135 @@ for (int i = 1; i <= m; i++) {
 	// 恢复
 	ans[q[i].id] = res; res = tp;
 }
+
+// End
+
+// DLX 1精确覆盖
+
+namespace DLX1{
+	int n, m, U[N], D[N], L[N], R[N], idx, s[N], hh, tt, X[N], Y[N];
+
+	int ans[M], top;
+
+	void inline init() {
+	    for (int i = 0; i <= m; i++)
+	        L[i] = i - 1, R[i] = i + 1, U[i] = D[i] = i;
+	    L[0] = m, R[m] = 0, idx = m;
+	}
+
+	void inline add(int x, int y) {
+	    X[++idx] = x, Y[idx] = y, s[y]++; 
+	    L[idx] = hh, R[idx] = tt, L[tt] = R[hh] = idx;
+	    U[idx] = U[y], D[idx] = y, D[U[y]] = idx, U[y] = idx;
+	    hh = idx;
+	} 
+
+	// 删除第 p 列
+
+	void del(int p) {
+	    L[R[p]] = L[p], R[L[p]] = R[p];
+	    for (int i = D[p]; i != p; i = D[i]) {
+	        for (int j = R[i]; j != i; j = R[j]) {
+	            s[Y[j]]--, U[D[j]] = U[j], D[U[j]] = D[j];
+	        }
+	    }
+	}
+
+	void resume(int p) {
+	    L[R[p]] = p, R[L[p]] = p;
+	    for (int i = U[p]; i != p; i = U[i]) {
+	        for (int j = L[i]; j != i; j = L[j]) {
+	            s[Y[j]]++, U[D[j]] = j, D[U[j]] = j;
+	        }
+	    }
+	}
+
+	bool inline dfs() {
+	    if (!R[0]) return true;
+	    int p = R[0];
+	    for (int i = R[0]; i; i = R[i])
+	        if (s[i] < s[p]) p = i;
+	    if (!s[p]) return false;
+	    del(p);
+	    for (int i = D[p]; i != p; i = D[i]) {
+	        ans[++top] = X[i];
+	        for (int j = R[i]; j != i; j = R[j]) del(Y[j]);
+	        if (dfs()) return true;
+	        for (int j = L[i]; j != i; j = L[j]) resume(Y[j]);
+	        --top;
+	    }
+	    resume(p);
+	    return false;
+	}
+}
+
+namespace DLX2{
+	int n, m, U[N], D[N], L[N], R[N], idx, s[N], hh, tt, X[N], Y[N];
+
+	int ans[M], top, dep, d[M];
+
+	bool st[N];
+
+	void inline init() {
+	    for (int i = 0; i <= m; i++)
+	        L[i] = i - 1, R[i] = i + 1, U[i] = D[i] = i;
+	    L[0] = m, R[m] = 0, idx = m;
+	}
+
+	void inline add(int x, int y) {
+	    X[++idx] = x, Y[idx] = y, s[y]++; 
+	    L[idx] = hh, R[idx] = tt, L[tt] = R[hh] = idx;
+	    U[idx] = U[y], D[idx] = y, D[U[y]] = idx, U[y] = idx;
+	    hh = idx;
+	} 
+
+	// 删除第 p 列
+
+	void inline del(int p) {
+	    for (int i = D[p]; i != p; i = D[i])
+	        L[R[i]] = L[i], R[L[i]] = R[i];
+	}
+
+	void resume(int p) {
+	    for (int i = U[p]; i != p; i = U[i])
+	        L[R[i]] = i, R[L[i]] = i;
+	}
+
+	int inline h() {
+	    memset(st, false, sizeof st);
+	    int cnt = 0;
+	    for (int i = R[0]; i; i = R[i]) {
+	        if (st[i]) continue;
+	        cnt++;
+	        for (int j = D[i]; j != i; j = D[j])
+	            for (int k = R[j]; k != j; k = R[k]) st[Y[k]] = true;
+	    }
+	    return cnt;
+	}
+
+	bool inline dfs() {
+	    if (top + h() > dep) return false;
+	    if (!R[0]) return true;
+	    int p = R[0];
+	    for (int i = R[0]; i; i = R[i])
+	        if (s[i] < s[p]) p = i;
+	    if (!s[p]) return false;
+	    for (int i = D[p]; i != p; i = D[i]) {
+	        ans[++top] = X[i];
+	        del(i);
+	        for (int j = R[i]; j != i; j = R[j]) del(j);
+	        if (dfs()) return true;
+	        for (int j = L[i]; j != i; j = L[j]) resume(j);
+	        resume(i);
+	        --top;
+	    }
+	    return false;
+	}
+
+	main::
+	dep = 1;
+    while(!dfs()) dep++;
+    printf("%d\n", dep);
+    for (int i = 1; i <= dep; i++) printf("%d ", ans[i]);
+	
+}
