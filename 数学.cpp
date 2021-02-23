@@ -473,3 +473,93 @@ int inline exLucas(LL n, LL m, int P) {
 	}
 	return CRT(len);
 }
+
+// 
+LL inline mul(LL a, LL b, LL P) {
+	a %= P, b %= P;
+	return ((a * b - (LL)((long double)a * b / P) * P) % P + P) % P; 
+}
+
+LL inline power(LL a, LL b, LL Mod) {
+	LL res = 1;
+	while (b) {
+		if (b & 1) res = mul(res, a, Mod);
+		a = mul(a, a, Mod);
+		b >>= 1;
+	}
+	return res;
+}
+
+class MillerRabin{
+private:
+	const int p[12] = { 2, 3, 5, 7, 11, 13, 17, 19, 61, 2333, 4567, 24251 };
+	bool inline check(LL x, int P) {
+		if (x % P == 0 || power(P % x, x - 1, x) == 0) return false;
+		LL k = x - 1;
+		while (k % 2 == 0) {
+			LL v = power(P % x, k >>= 1, x);
+			if (v != 1 && v != x - 1) return false;
+			if (v == x - 1) return true;
+		}
+		return true;
+	}
+public:
+	bool inline isPrime(LL x) {
+		if (x < 2) return false;
+		for (int i = 0; i < 12; i++) {
+			if (p[i] == x) return true;
+			if (!check(x, p[i])) return false;
+		}
+		return true;
+	}
+} mr;
+
+// PollardRho 
+
+LL inline Abs(LL x) {
+	return x < 0 ? -x : x;
+}
+
+LL inline f(LL x, LL c, LL P) {
+	return (mul(x, x, P) + c) % P;
+}
+
+LL gcd(LL a, LL b) {
+	return b ? gcd(b, a % b) : a;
+}
+
+LL inline PollardRho(LL n) {
+	LL c = (LL)rand() * rand() % (n - 1) + 1;
+	LL p = 0, q = 0, v = 1;
+	for (int i = 1; ; i <<= 1, p = q, v = 1) {
+		for (int j = 0; j < i; j++) {
+			q = f(q, c, n);
+			v = mul(v, Abs(q - p), n);
+			if (j % 100 == 0) {
+				LL d = gcd(v, n);
+				if (d > 1) return d;
+			}
+		}
+		LL d = gcd(v, n);
+		if (d > 1) return d;
+	}
+	return n;
+}
+
+LL n, ans;
+
+// 找最大质因子
+
+void fact(LL n) {
+	if (n < 2 || n <= ans) return;
+	if (mr.isPrime(n)) {
+		if (n > ans) ans = n;
+		return;
+	}	
+	LL p = n;
+	while (p >= n) p = PollardRho(n);
+	while (n % p == 0) n /= p;
+	fact(n), fact(p);
+}
+
+// _end
