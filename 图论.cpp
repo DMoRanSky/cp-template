@@ -348,3 +348,56 @@ void solve(int u) {
 S = n, solve(1);
 
 // End
+
+namespace KM{
+    int n, va[N], vb[N], match[N], last[N];
+    LL a[N], b[N], upd[N], w[N][N];
+    bool dfs(int u, int fa) {
+        va[u] = 1;
+        for (int v = 1; v <= n; v++) {
+            if (vb[v]) continue;
+            if (a[u] + b[v] == w[u][v]) {
+                vb[v] = 1, last[v] = fa;
+                if (!match[v] || dfs(match[v], v)) {
+                    match[v] = u; return true;
+                }
+            } else if (a[u] + b[v] - w[u][v] < upd[v])
+                upd[v] = a[u] + b[v] - w[u][v], last[v] = fa;
+        }
+        return false;
+    }
+    void inline calc(int len, LL d[N][N]) {
+        n = len;
+        for (int i = 1; i <= n; i++)
+            for (int j = 1; j <= n; j++) w[i][j] = d[i][j];
+        for (int i = 1; i <= n; i++) {
+            a[i] = -1e18, b[i] = 0;
+            for (int j = 1; j <= n; j++)
+                a[i] = max(a[i], w[i][j]);
+        }
+        for (int i = 1; i <= n; i++) {
+            memset(va, 0, sizeof va);
+            memset(vb, 0, sizeof vb);
+            memset(upd, 0x3f, sizeof upd);
+            int st = 0; match[0] = i;
+            while (match[st]) {
+                LL delta = 1e18;
+                if (dfs(match[st], st)) break;
+                for (int j = 1; j <= n; j++) {
+                    if (!vb[j] && upd[j] < delta) 
+                        delta = upd[j], st = j;
+                }
+                for (int j = 1; j <= n; j++) {
+                    if (va[j]) a[j] -= delta;
+                    if (vb[j]) b[j] += delta;
+                    else upd[j] -= delta;
+                }
+                vb[st] = true;
+            }
+            while (st) {
+                match[st] = match[last[st]];
+                st = last[st];
+            }
+        }
+    }
+}
