@@ -420,3 +420,56 @@ namespace Red{
 
 
 // _end
+
+// Exgcd 求逆
+
+int inline inv(int a, int P) {
+	LL x, y;
+	LL d = exgcd(a, P, x, y);
+    LL k = P / d;
+    x = (x % k + k) % k;
+    return x;
+}
+
+// ExLucas
+
+
+namespace Cpk{
+	int h[M], p, k, v, P;
+	void init(int Po, int K, int V) {
+		p = Po, k = K, P = v = V;
+		h[0] = 1;
+		for (int i = 1; i <= v; i++) {
+			h[i] = h[i - 1];
+			if (i % p) h[i] = (LL)h[i] * i % P;	
+		} 
+	}
+	int inline f(LL n) {
+		if (!n) return 1;
+		return (LL)f(n / p) * power(h[v], n / v, v) % P * h[n % v] % P;
+	}
+	LL inline g(LL n) {
+		LL res = 0;
+		while (n) {
+			res += n / p;
+			n /= p;
+		}
+		return res;
+	}
+	int inline C(LL n, LL m) {
+		return (LL)power(p, g(n) - g(m) - g(n - m), P) * f(n) % P * inv((LL)f(m) * f(n - m) % P, P) % P;
+	}
+}
+
+int inline exLucas(LL n, LL m, int P) {
+	for (int i = 2; i <= P; i++) {
+		if (P % i == 0) {
+			int k = 0, t = 1;
+			while (P % i == 0) k++, P /= i, t *= i;
+			++len, p[len] = t;
+			Cpk::init(i, k, t);
+			a[len] = Cpk::C(n, m);
+		}
+	}
+	return CRT(len);
+}
