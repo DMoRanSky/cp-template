@@ -507,6 +507,9 @@ namespace DLX1{
 	    resume(p);
 	    return false;
 	}
+	main::
+	add(i, j) if (i, j) = 1
+	dfs()
 }
 
 namespace DLX2{
@@ -573,9 +576,10 @@ namespace DLX2{
 	}
 
 	main::
+	add(i, j) if (i, j) = 1
 	dep = 1;
     while(!dfs()) dep++;
     printf("%d\n", dep);
     for (int i = 1; i <= dep; i++) printf("%d ", ans[i]);
-	
+
 }
