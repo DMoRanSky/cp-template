@@ -25,7 +25,7 @@ int sign(double x) {
     return 1;
 }
 
-bool segment_intersection(PDD a1, PDD a2, PDD b1, PDD b2) {
+bool segInter(PDD a1, PDD a2, PDD b1, PDD b2) {
     double c1 = cross(a2 - a1, b1 - a1), c2 = cross(a2 - a1, b2 - a1);
     double c3 = cross(b2 - b1, a2 - b1), c4 = cross(b2 - b1, a1 - b1);
     return sign(c1) * sign(c2) <= 0 && sign(c3) * sign(c4) <= 0;
