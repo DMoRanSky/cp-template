@@ -19,6 +19,12 @@ double inline dist(PDD a, PDD b) { return sqrt((a.x - b.x) * (a.x - b.x) + (a.y 
 PDD inline rotate(PDD a, double x) { return make_pair ( cos(x) * a.x + sin(x) * a.y, -sin(x) * a.x + cos(x) * a.y ); }
 PDD inline norm(PDD a) { return a / len(a); }
 
+int sign(double x) {
+    if (fabs(x) < eps) return 0;
+    if (x < 0) return -1;
+    return 1;
+}
+
 bool segment_intersection(PDD a1, PDD a2, PDD b1, PDD b2) {
     double c1 = cross(a2 - a1, b1 - a1), c2 = cross(a2 - a1, b2 - a1);
     double c3 = cross(b2 - b1, a2 - b1), c4 = cross(b2 - b1, a1 - b1);
