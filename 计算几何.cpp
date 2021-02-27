@@ -3,6 +3,9 @@ int inline cmp(double x, double y) {
     if (fabs(x - y) < eps) return 0;
     return x < y ? -1 : 1;
 }
+
+
+
 double inline cross(PDD a, PDD b) { return a.x * b.y - a.y * b.x; }
 PDD operator - (const PDD &a, const PDD &b) { return make_pair(a.x - b.x, a.y - b.y); }
 PDD operator + (const PDD &a, const PDD &b) { return make_pair(a.x+ b.x, a.y+ b.y); }
@@ -15,6 +18,12 @@ double inline project(PDD a, PDD b, PDD c) { return dot(b - a, c - a) / len(b - 
 double inline dist(PDD a, PDD b) { return sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y)); }
 PDD inline rotate(PDD a, double x) { return make_pair ( cos(x) * a.x + sin(x) * a.y, -sin(x) * a.x + cos(x) * a.y ); }
 PDD inline norm(PDD a) { return a / len(a); }
+
+bool segment_intersection(PDD a1, PDD a2, PDD b1, PDD b2) {
+    double c1 = cross(a2 - a1, b1 - a1), c2 = cross(a2 - a1, b2 - a1);
+    double c3 = cross(b2 - b1, a2 - b1), c4 = cross(b2 - b1, a1 - b1);
+    return sign(c1) * sign(c2) <= 0 && sign(c3) * sign(c4) <= 0;
+}
 
 bool cmp2 (const Line &a, const Line &b) {
     double A = getAngle(a), B = getAngle(b);
