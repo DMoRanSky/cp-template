@@ -73,40 +73,57 @@ void tarjan(int u) {
     }
 }
 
-
 // 最大流
-bool inline bfs() {
-    int hh = 0, tt = -1;
-    memset(d, 0, sizeof d);
-    q[++tt] = s, d[s] = 1, cur[s] = head[s];
-    while (hh <= tt) {
-        int u = q[hh++];
-        for (int i = head[u]; i; i = e[i].next) {
-            int v = e[i].v;
-            if (!d[v] && e[i].w) {
-                cur[v] = head[v];
-                q[++tt] = v, d[v] = d[u] + 1;
-                if (v == t) return true;
+namespace MF{
+    int n, m, s, t, pre[N], cur[N], q[N];
+    LL res, maxflow, d[N];
+
+    int head[N], numE = 1;
+
+    struct E{
+        int next, v, w;
+    } e[M << 1];
+
+    void inline add(int u, int v, int w) {
+        e[++numE] = (E) { head[u], v, w };
+        head[u] = numE;
+    }
+
+    bool inline bfs() {
+        int hh = 0, tt = -1;
+        memset(d, 0, sizeof d);
+        q[++tt] = s, d[s] = 1, cur[s] = head[s];
+        while (hh <= tt) {
+            int u = q[hh++];
+            for (int i = head[u]; i; i = e[i].next) {
+                int v = e[i].v;
+                if (!d[v] && e[i].w) {
+                    cur[v] = head[v];
+                    q[++tt] = v, d[v] = d[u] + 1;
+                    if (v == t) return true;
+                }
             }
         }
+        return false;
     }
-    return false;
+
+    LL inline dinic(int u, LL flow) {
+        if (u == t) return flow;
+        LL rest = flow;
+        for (int i = cur[u]; i && rest; i = e[i].next) {
+            cur[u] = i;
+            int v = e[i].v;
+            if (e[i].w && d[v] == d[u] + 1) {
+                int k = dinic(v, min((LL)e[i].w, rest));
+                if (!k) d[v] = 0;
+                rest -= k, e[i].w -= k, e[i ^ 1].w += k;
+            }
+        }
+        return flow - rest;
+    }
+    void inline addE()
 }
 
-LL inline dinic(int u, LL flow) {
-    if (u == t) return flow;
-    LL rest = flow;
-    for (int i = cur[u]; i && rest; i = e[i].next) {
-        cur[u] = i;
-        int v = e[i].v;
-        if (e[i].w && d[v] == d[u] + 1) {
-            int k = dinic(v, min((LL)e[i].w, rest));
-            if (!k) d[v] = 0;
-            rest -= k, e[i].w -= k, e[i ^ 1].w += k;
-        }
-    }
-    return flow - rest;
-}
 
 // ----重链剖分----
 
