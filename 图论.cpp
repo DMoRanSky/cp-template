@@ -434,3 +434,72 @@ namespace KM{
         }
     }
 }
+
+// 保序回归
+class IR {
+public:
+    int p, w[N], f[N], y[N], t[N], id[N], n, t1[N], t2[N];
+    vector<int> g[N];
+    void inline add(int u, int v) { 
+        g[u].push_back(v); 
+    }
+    LL inline power(int a, int b) {
+        LL res = 1;
+        while (b--) res *= a;
+        return res;
+    }
+    // -w((mid + 1 - y) ^ p - (mid - y) ^ p)
+    LL inline calc1(int i, int mid) {
+        return -(w[i] * (power(mid + 1 - y[i], p) - power(mid - y[i], p)));
+    }
+
+    // -(w(mid-y)^p)'
+    LL inline calc2(int i, int mid) {
+        return 2 * (y[i] - mid) - 1;
+    }
+
+    void solve(int l, int r, int L, int R) {
+        if (l > r) return;
+        mf.init(r - l + 3, r - l + 2, r - l + 3);
+        for (int i = l; i <= r; i++) id[t[i]] = i - l + 1;
+        int mid = (L + R) >> 1;
+        for (int i = l; i <= r; i++) {
+            int u = t[i], c = R - L == 1 ? calc2(u, L) : calc1(u, mid);
+            if (c > 0) mf.addE(mf.s, id[u], c);
+            else mf.addE(id[u], mf.t, -c);
+            for (int j = 0; j < g[u].size(); j++) {
+                int v = g[u][j];
+                if (id[v]) mf.addE(id[u], id[v], INF);
+            }
+        }
+        for (int i = l; i <= r; i++) id[t[i]] = 0;
+        mf.work();
+        if (R - L == 1) {
+            for (int i = l; i <= r; i++)
+                f[t[i]] = !mf.d[i - l + 1] ? L : R;
+            return;
+        }
+        int c1 = 0, c2 = 0;
+        for (int i = l; i <= r; i++)
+            if (!mf.d[i - l + 1]) t1[++c1] = t[i];
+            else t2[++c2] = t[i];
+        for (int i = 1; i <= c1; i++)
+            t[l + i - 1] = t1[i];
+        for (int i = 1; i <= c2; i++)
+            t[l + c1 + i - 1] = t2[i];
+        solve(l, l + c1 - 1, L, mid);
+        solve(l + c1, r, mid, R);
+    }
+
+    LL inline work(int len, int P, int W[], int Y[]) {
+        n = len, p = P;
+        int mn = 2e9, mx = -2e9;
+        for (int i = 1; i <= n; i++)
+            t[i] = i, w[i] = W[i], y[i] = Y[i], mn = min(mn, y[i]), mx = max(mx, y[i]);
+        solve(1, n, mn, mx);
+        LL res = 0;
+        for (int i = 1; i <= n; i++)
+            res += power(f[i] - y[i], p);
+        return res;
+    }
+} ir;
