@@ -563,3 +563,17 @@ void fact(LL n) {
 }
 
 // _end
+
+
+// 线性基
+
+LL a[N];
+
+int insert(LL x) {
+	for (int i = L - 1; ~i; i--) {
+		if(!(x >> i & 1)) continue; 
+		if (a[i]) x ^= a[i];
+		else { a[i] = x; return i; }
+	}
+	return -1;
+}
