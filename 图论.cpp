@@ -121,7 +121,15 @@ namespace MF{
         }
         return flow - rest;
     }
-    void inline addE()
+    void inline addE(int u, int v, int w) {
+        add(u, v, w); add(v, u, 0);
+    }
+    LL inline work() {
+        maxflow = 0;
+        while (bfs()) 
+            while (res = dinic(s, INF)) maxflow += res;
+        return maxflow;
+    }
 }
 
 
