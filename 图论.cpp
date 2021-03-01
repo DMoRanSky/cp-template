@@ -89,9 +89,15 @@ namespace MF{
         head[u] = numE;
     }
 
+    void inline init(int v, int a, int b) {
+        for (int i = 1; i <= n; i++) head[i] = 0;
+        numE = 1;
+        n = v, s = a, t = b;
+    }
+
     bool inline bfs() {
         int hh = 0, tt = -1;
-        memset(d, 0, sizeof d);
+        for (int i = 1; i <= n; i++) d[i] = 0;
         q[++tt] = s, d[s] = 1, cur[s] = head[s];
         while (hh <= tt) {
             int u = q[hh++];
