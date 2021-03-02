@@ -460,6 +460,10 @@ public:
 
     void solve(int l, int r, int L, int R) {
         if (l > r) return;
+        if (L == R) {
+            for (int i = l; i <= r; i++) f[t[i]] = L;
+            return;
+        }
         mf.init(r - l + 3, r - l + 2, r - l + 3);
         for (int i = l; i <= r; i++) id[t[i]] = i - l + 1;
         int mid = (L + R) >> 1;
@@ -488,7 +492,7 @@ public:
         for (int i = 1; i <= c2; i++)
             t[l + c1 + i - 1] = t2[i];
         solve(l, l + c1 - 1, L, mid);
-        solve(l + c1, r, mid, R);
+        solve(l + c1, r, mid + 1, R);
     }
 
     LL inline work(int len, int P, int W[], int Y[]) {
