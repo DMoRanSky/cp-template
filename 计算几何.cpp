@@ -55,7 +55,7 @@ bool inline Right(Line a, Line b, Line c) {
 void inline andrew() {
     sort(p + 1, p + 1 + n);
     for (int i = 1; i <= n; i++) {
-        while (top > 1 && area(p[s[top - 1]], p[s[top]], p[i]) <= 0) {
+        while (top > 1 && area(p[s[top - 1]], p[s[top]], p[i]) < 0) {
             if (area(p[s[top - 1]], p[s[top]], p[i]) < 0) st[s[top--]] = false;
             else top--;
         }
@@ -64,7 +64,7 @@ void inline andrew() {
     st[1] = false;
     for (int i = n; i; i--) {
         if (!st[i]) {
-            while (top > 1 && area(p[s[top - 1]], p[s[top]], p[i]) <= 0) 
+            while (top > 1 && area(p[s[top - 1]], p[s[top]], p[i]) <s 0) 
                 st[s[top--]] = false;
             st[i] = true, s[++top] = i;
         }
