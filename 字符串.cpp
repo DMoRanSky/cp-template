@@ -154,4 +154,138 @@ struct ACAutomation{
 	}
 }
 
-//
+// Runs
+
+struct Runs{
+	typedef unsigned long long ULL;
+
+	const int N = 1e6 + 5;
+
+	int n, tot, b1[N], b2[N];
+
+	ULL H[N], P[N], B = 31;
+
+	char s[N];
+
+	struct Node {
+		int a, b, c;
+		bool operator < (const Node &y) const {
+			if (a != y.a) return a < y.a;
+			if (b != y.b) return b < y.b;
+			return c < y.c;
+		}
+		bool operator == (const Node &y) const {
+			return a == y.a && b == y.b && c == y.c;
+		}
+	} ans[N << 1];
+
+	ULL inline get(int l, int r) {
+		return H[r] - H[l - 1] * P[r - l + 1];
+	}
+
+	int inline lcp(int i, int j) {
+		if (s[i] != s[j]) return 0;
+		int l = 1, r = min(n - i + 1, n - j + 1);
+		while (l < r) {
+			int mid = (l + r + 1) >> 1;
+			if (get(i, i + mid - 1) == get(j, j + mid - 1)) l = mid;
+			else r = mid - 1;
+		}
+		return r;
+	}
+
+	int inline lcs(int i, int j) {
+		if (s[i] != s[j]) return 0;
+		int l = 1, r = min(i, j);
+		while (l < r) {
+			int mid = (l + r + 1) >> 1;
+			if (get(i - mid + 1, i) == get(j - mid + 1, j)) l = mid;
+			else r = mid - 1;
+		}
+		return r;
+	}
+
+	int inline cmp(int i, int j) {
+		int k = lcp(i, j);
+		return s[i + k] < s[j + k];
+	}
+
+	int inline cmp2(int i, int j) {
+		int k = lcp(i, j);
+		if (i + k == n + 1) return false;
+		return s[i + k] < s[j + k];
+	}
+
+
+	void inline add(int i, int j) {
+		int L = lcs(i - 1, j), len = j - i + 1;
+		if (true) {
+			int R = lcp(i, j + 1);
+			if (L + R >= len) ans[++tot] = (Node) { i - L, j + R, len };
+		}
+	}
+
+	void inline prework() {
+		P[0] = 1;
+		for (int i = 1; i <= n; i++) {
+			P[i] = P[i - 1] * B;
+			H[i] = (H[i - 1] * B + s[i] - 'a');
+		}
+	}
+
+	void inline Runs() {
+		for (int i = n; i; i--) {
+			b1[i] = b2[i] = i + 1;
+			while (b1[i] < n && cmp(i, b1[i])) b1[i] = b1[b1[i]];
+			while (b2[i] < n && cmp2(b2[i], i)) b2[i] = b2[b2[i]];
+			add(i, b1[i] - 1);
+			if (b1[i] != b2[i]) add(i, b2[i] - 1);
+		}
+		sort(ans + 1, ans + 1 + tot);
+		tot = unique(ans + 1, ans + 1 + tot) - ans - 1;
+	}
+
+}
+
+struct GSAM{
+	int idx, last;
+	struct SAM{
+		int ch[26], len, link;
+	} t[N];
+	void inline init() {
+		last = idx = 1;
+	}
+	void inline insert(int c) {
+		int p = last;
+		if (t[p].ch[c]) {
+			int q = t[p].ch[c];
+			if (t[q].len == t[p].len + 1) last = q;
+			else {
+				int y = ++idx; t[y] = t[q];
+				t[y].len = t[p].len + 1;
+				while (p && t[p].ch[c] == q)
+					t[p].ch[c] = y, p = t[p].link;
+				t[q].link = y;
+				last = y;	
+			}
+			return;
+		}
+		int x = ++idx; t[x].len = t[p].len + 1;
+		while (p && !t[p].ch[c]) t[p].ch[c] = x, p = t[p].link;
+		int q, y;
+		if (!p) t[x].link = 1;
+		else {
+			q = t[p].ch[c];
+			if (t[q].len == t[p].len + 1) t[x].link = q;
+			else {
+				int y = ++idx; t[y] = t[q];
+				t[y].len = t[p].len + 1;
+				while (p && t[p].ch[c] == q)
+					t[p].ch[c] = y, p = t[p].link;
+				t[q].link = t[x].link = y;
+				last = y;	
+			}
+		}
+		last = x;
+	}
+} t;
