@@ -507,3 +507,90 @@ public:
         return res;
     }
 } ir;
+
+// 有负圈 / 上下界
+struct MCMF2{
+
+    const int N = 205, M = 10005;
+
+    const int INF = 0x3f3f3f3f;
+
+    int n, m, s, t, maxflow, cost, d[N], incf[N], pre[N];
+    int q[N], in, S, T;
+    int head[N], a[N], numE = 1, a0, a1;
+    bool vis[N];
+    struct E{
+        int next, v, w, c;
+    } e[M << 2];
+    void inline add(int u, int v, int w, int c) {
+        e[++numE] = (E) { head[u], v, w, c };
+        head[u] = numE;
+    }
+    void inline addE(int u, int v, int w, int c) {
+        add(u, v, w, c), add(v, u, 0, -c);
+    }
+    bool spfa() {
+        memset(vis, false, sizeof vis);
+        memset(d, 0x3f, sizeof d);
+        int hh = 0, tt = 1;
+        q[0] = S; d[S] = 0; incf[S] = 2e9;
+        while (hh != tt) {
+            int u = q[hh++]; vis[u] = false;
+            if (hh == N) hh = 0;
+            for (int i = head[u]; i; i = e[i].next) {
+                int v = e[i].v;
+                if (e[i].w && d[u] + e[i].c < d[v]) {
+                    d[v] = d[u] + e[i].c;
+                    pre[v] = i;
+                    incf[v] = min(incf[u], e[i].w);
+                    if (!vis[v]) {
+                        q[tt++] = v;
+                        vis[v] = true;
+                        if (tt == N) tt = 0;
+                    }
+                }
+            }
+        } 
+        return d[T] != INF;
+    }
+    void update() {
+        int x = T;
+        while (x != S) {
+            int i = pre[x];
+            e[i].w -= incf[T], e[i ^ 1].w += incf[T];
+            x = e[i ^ 1].v;
+        }
+        maxflow += incf[T];
+        cost += d[T] * incf[T];
+    }
+
+    void inline addEdge(int u, int v, int l, int d, int c) {
+        a[v] += l, a[u] -= l;
+        addE(u, v, d - l, c);
+    }
+
+    void inline work() {
+        while (spfa()) update();
+    }
+
+    void inline ADD(int u, int v, int w, int c) {
+        if (c >= 0) addEdge(u, v, 0, w, c); 
+        else a[v] += w, a[u] -= w, addEdge(v, u, 0, w, -c), a1 += c * w;
+    }
+
+    void inline solve() {
+        for (int i = 1; i <= n; i++) {
+            if (!a[i]) continue;
+            if (a[i] > 0) addEdge(S, i, 0, a[i], 0);
+            else addEdge(i, T, 0, -a[i], 0);
+        }
+        addEdge(T, S, 0, INF, 0);
+        work();
+        S = s, T = t;
+        a1 += cost;
+        maxflow = cost = 0;
+        e[numE].w = e[numE - 1].w = 0;
+        work();
+        a0 += maxflow, a1 += cost;
+    }
+}
