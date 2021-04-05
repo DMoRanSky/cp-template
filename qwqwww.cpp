@@ -79,31 +79,28 @@ int main() {
             }
             bc[r][l] = s1;
             hg[r][l] = (1ll + P - s1) % P;
-            if (l > 1 && bc[r][l] == bc[r][l - 1]) {
-                ban[r][l - 1] = 1;
-            }
         }
         bc[r][0] = 1;
     }
     f[0][0] = 1;
     for (int i = 1; i <= n; i++) {
-        memcpy(g, f, sizeof g);
-        memset(f, 0, sizeof f);
-        for (int k = 0; k <= K; k++) {
-            int s = 0;
-            for (int j = 0; j <= n; j++) {
-                add(s, g[j][k]);
-                if (!ban[i][j]) {
-                    add(f[j][k], s);
-                    s = 0;
-                }
-            }
-        }
+        // memcpy(g, f, sizeof g);
+        // memset(f, 0, sizeof f);
+        // for (int k = 0; k <= K; k++) {
+        //     int s = 0;
+        //     for (int j = 0; j <= n; j++) {
+        //         add(s, g[j][k]);
+        //         if (!ban[i][j]) {
+        //             add(f[j][k], s);
+        //             s = 0;
+        //         }
+        //     }
+        // }
         memcpy(g, f, sizeof g);
         for (int v = 1, s = e[i].c; v <= K; v++, s = (LL)s * e[i].c % P) {
             wp[v] = (LL)s * infact[v] % P;
         }
-        for (rint j = 0; j <= n; j++) {
+        for (rint j = 0; j <= i; j++) {
             rint t = j == 0 ? i : j;
             for (rint k = 0; k <= K; k++) {
                 if (!g[j][k]) continue;
