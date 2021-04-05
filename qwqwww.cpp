@@ -16,7 +16,7 @@ int n, m, K, bc[N][N], hg[N][N], fact[N], infact[N], wp[N];
 
 int f[N][N], g[N][N];
 
-void inline add(int &x, int y) {
+void inline add(rint &x, rint y) {
     x += y;
     if (x >= P) x -= P;
 }
