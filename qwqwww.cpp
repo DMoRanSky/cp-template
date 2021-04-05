@@ -14,6 +14,8 @@ const int N = 405, P = 998244353;
 
 int n, m, K, bc[N][N], hg[N][N], fact[N], infact[N], wp[N];
 
+bool ban[N][N];
+
 int f[N][N], g[N][N];
 
 void inline add(rint &x, rint y) {
