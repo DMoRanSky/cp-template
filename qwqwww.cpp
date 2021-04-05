@@ -4,6 +4,7 @@
 #include <vector>
 #include <algorithm>
 #include <cstring>
+#define rint register int
 #define pb push_back
 using namespace std;
 
@@ -86,12 +87,12 @@ int main() {
         for (int v = 1, s = e[i].c; v <= K; v++, s = (LL)s * e[i].c % P) {
             wp[v] = (LL)s * infact[v] % P;
         }
-        for (int j = 0; j <= n; j++) {
-            int t = j == 0 ? i : j;
-            for (int k = 0; k <= K; k++) {
+        for (rint j = 0; j <= n; j++) {
+            rint t = j == 0 ? i : j;
+            for (rint k = 0; k <= K; k++) {
                 if (!g[j][k]) continue;
                 //add(f[j][k], g[j][k]);
-                for (int v = 1; v + k <= K; v++) {
+                for (rint v = 1; v + k <= K; v++) {
                     add(f[t][v + k], (LL)g[j][k] * wp[v] % P);
                 }
             }
