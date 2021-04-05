@@ -99,6 +99,7 @@ int main() {
         memset(f, 0, sizeof f);
         for (int j = 0; j <= n; j++) {
             for (int k = 0; k <= K; k++) {
+                if (!g[j][k]) continue;
                 add(f[j][k], (LL)g[j][k] * bc[i][j] % P);
                 add(f[0][k], (LL)g[j][k] * hg[i][j] % P);
             }
