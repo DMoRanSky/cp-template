@@ -101,7 +101,6 @@ int main() {
             }
         }
         memcpy(g, f, sizeof g);
-        memset(f, 0, sizeof f);
         for (int v = 1, s = e[i].c; v <= K; v++, s = (LL)s * e[i].c % P) {
             wp[v] = (LL)s * infact[v] % P;
         }
