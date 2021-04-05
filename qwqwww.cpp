@@ -93,7 +93,7 @@ int main() {
                 for (int v = 1; v + k <= K; v++) {
                     int t = j;
                     if (t == 0) t = i;
-                    add(f[t][v + k], (LL)g[j][k] * wp[v] % P);
+                    //add(f[t][v + k], (LL)g[j][k] * wp[v] % P);
                 }
             }
         }
