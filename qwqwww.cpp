@@ -79,6 +79,9 @@ int main() {
             }
             bc[r][l] = s1;
             hg[r][l] = (1ll + P - s1) % P;
+            if (bc[r][l] == bc[r][l - 1]) {
+                ban[r][l - 1] = 1;
+            }
         }
         bc[r][0] = 1;
     }
