@@ -87,11 +87,12 @@ int main() {
             wp[v] = (LL)s * infact[v] % P;
         }
         for (int j = 0; j <= n; j++) {
+            int t = j == 0 ? i : j;
             for (int k = 0; k <= K; k++) {
                 if (!g[j][k]) continue;
                 //add(f[j][k], g[j][k]);
                 for (int v = 1; v + k <= K; v++) {
-                    add(f[j == 0 ? i : j][v + k], (LL)g[j][k] * wp[v] % P);
+                    add(f[t][v + k], (LL)g[j][k] * wp[v] % P);
                 }
             }
         }
