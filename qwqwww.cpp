@@ -91,9 +91,7 @@ int main() {
                 if (!g[j][k]) continue;
                 //add(f[j][k], g[j][k]);
                 for (int v = 1; v + k <= K; v++) {
-                    int t = j;
-                    if (t == 0) t = i;
-                    //add(f[t][v + k], (LL)g[j][k] * wp[v] % P);
+                    add(f[j == 0 ? i : j][v + k], (LL)g[j][k] * wp[v] % P);
                 }
             }
         }
