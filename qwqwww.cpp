@@ -83,14 +83,17 @@ int main() {
     for (int i = 1; i <= n; i++) {
         memcpy(g, f, sizeof g);
         //memset(f, 0, sizeof f);
+        for (int v = 1, s = e[i].c; v <= K; v++, s = (LL)s * e[i].c % P) {
+            wp[v] = (LL)s * infact[v] % P;
+        }
         for (int j = 0; j <= n; j++) {
             for (int k = 0; k <= K; k++) {
                 if (!g[j][k]) continue;
                 //add(f[j][k], g[j][k]);
-                for (int v = 1, s = e[i].c; v + k <= K; v++, s = (LL)s * e[i].c % P) {
+                for (int v = 1; v + k <= K; v++) {
                     int t = j;
                     if (t == 0) t = i;
-                    add(f[t][v + k], (LL)g[j][k] * s % P * infact[v] % P);
+                    add(f[t][v + k], (LL)g[j][k] * wp[v] % P);
                 }
             }
         }
