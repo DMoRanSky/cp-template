@@ -100,7 +100,7 @@ int main() {
         for (int v = 1, s = e[i].c; v <= K; v++, s = (LL)s * e[i].c % P) {
             wp[v] = (LL)s * infact[v] % P;
         }
-        for (rint j = 0; j <= i; j++) {
+        for (rint j = 0; j <= i - 1; j++) {
             rint t = j == 0 ? i : j;
             for (rint k = 0; k <= K; k++) {
                 if (!g[j][k]) continue;
@@ -113,7 +113,7 @@ int main() {
         }
         memcpy(g, f, sizeof g);
         memset(f, 0, sizeof f);
-        for (int j = 0; j <= n; j++) {
+        for (int j = 0; j <= i; j++) {
             for (int k = 0; k <= K; k++) {
                 if (!g[j][k]) continue;
                 add(f[j][k], (LL)g[j][k] * bc[i][j] % P);
