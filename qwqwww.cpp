@@ -92,7 +92,8 @@ int main() {
             for (rint k = 0; k <= K; k++) {
                 if (!g[j][k]) continue;
                 //add(f[j][k], g[j][k]);
-                for (rint v = 1; v + k <= K; v++) {
+                rint o = K - k;
+                for (rint v = 1; v <= o; v++) {
                     add(f[t][v + k], (LL)g[j][k] * wp[v] % P);
                 }
             }
