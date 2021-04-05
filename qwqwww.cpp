@@ -92,9 +92,8 @@ int main() {
         for (int k = 0; k <= K; k++) {
             int s = 0;
             for (int j = 0; j <= n; j++) {
-                if (ban[i][j]) add(s, g[j][k]);
-                else {
-                    add(s, g[j][k]);
+                add(s, g[j][k]);
+                if (!ban[i][j]) {
                     add(f[j][k], s);
                     s = 0;
                 }
