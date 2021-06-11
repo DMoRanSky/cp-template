@@ -20,17 +20,18 @@ void dijkstra() {
     d[1] = 0; q.push(make_pair(0, 1));
     while(!q.empty()) {
         PII u = q.top(); q.pop();
-        if(vis[u.second]) continue;
-        vis[u.second] = true;
-        for (int i = head[u.second]; i; i = e[i].next) {
+        if(vis[u.se]) continue;
+        vis[u.se] = true;
+        for (int i = head[u.se]; i; i = e[i].next) {
             int v = e[i].v;
-            if(d[u.second] + e[i].w < d[v]) {
-                d[v] = d[u.second] + e[i].w;
+            if(d[u.se] + e[i].w < d[v]) {
+                d[v] = d[u.se] + e[i].w;
                 q.push(make_pair(d[v], v));
             }
         }
     }
 }
+
 
 // Spfa
 
