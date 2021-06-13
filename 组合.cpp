@@ -22,7 +22,7 @@ void inline factPrework(int n) {
 }
 
 int inline C(int a, int b) {
-	if (a < b) return 0;
+	if (a < b || a < 0 || b < 0) return 0;
 	return (LL)fact[a] * infact[b] % P * infact[a - b] % P;
 }
 
