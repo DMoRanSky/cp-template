@@ -18,7 +18,7 @@ double inline project(PDD a, PDD b, PDD c) { return dot(b - a, c - a) / len(b - 
 double inline dist(PDD a, PDD b) { return sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y)); }
 PDD inline rotate(PDD a, double x) { return make_pair ( cos(x) * a.x + sin(x) * a.y, -sin(x) * a.x + cos(x) * a.y ); }
 PDD inline norm(PDD a) { return a / len(a); }
-PDD angle(PDD a, PDD b) {
+double angle(PDD a, PDD b) {
     return acos(dot(a, b) / len(a) / len(b));
 }
 int sign(double x) {
