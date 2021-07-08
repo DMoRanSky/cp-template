@@ -7,6 +7,7 @@ using namespace std;
 typedef long long LL;
 typedef vector<int> Poly;
 
+#define pb push_back
 
 const int N = 8e5 + 5, P = 998244353, G = 3;
 
@@ -362,15 +363,33 @@ Poly polyInterpo(int n, int X[], int Y[]) {
 	return bc[1];
 }
 
+// f[0 ... n] 线性递推第 b 项
+// g[1 ~ k] 为递推多项式
+
+int inline LRS(int b, Poly f, Poly g) {
+	int k = g.size() - 1;
+	g[0] = 1;
+	for (int i = 1; i <= k; i++) g[i] = (P - g[i]) % P;
+	Poly h = mul(f, g, k);
+	while (b) {
+		Poly g2 = g;
+		for (int i = 0; i < g2.size(); i += 2)
+			g2[i] = (P - g2[i]) % P;
+		Poly t = mul(g2, g); g.clear();
+		for (int i = 0; i < t.size(); i += 2)
+			g.pb(t[i]);
+		t = mul(g2, h); h.clear();
+		for (int i = (b & 1); i < t.size(); i += 2)
+			h.pb(t[i]);
+		b >>= 1;
+	}
+	return (LL)h[0] * power(g[0], P - 2) % P;
+}
+
 // _End_
 
-int n;
 
 int main() {
-	scanf("%d", &n); init(2 * n);
-	Poly f(n, 0);
-	for (int i = 0; i < n; i++) scanf("%d", &f[i]);
-	f = sqrt(f);
-	for (int i = 0; i < n; i++) printf("%d ", f[i]);
+	
 	return 0;
 }
