@@ -20,6 +20,8 @@ template <typename T> void inline read(T &x) {
     x *= f;
 }
 
+const int N = 1e5 + 5, M = 2e5 + 5;
+
 // 最大流
 namespace MF{
     int n, m, s, t, pre[N], cur[N], q[N];
@@ -84,8 +86,17 @@ namespace MF{
         return maxflow;
     }
 }
+
+int n, m;
+
+
  
 int main() {
+	read(n), read(m);
+	int S = n * m + 1, T = n * m + 2;
+	MF::init(T, S, T);
+	for (int i = 1; i <= n; i++) {
 
+	}
 	return 0;
 }
