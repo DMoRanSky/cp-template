@@ -247,6 +247,36 @@ struct Runs{
 
 }
 
+struct SAM{
+	int idx, last;
+	struct SAM_{
+		int ch[26], len, link;
+	} t[N];
+	void inline init() {
+		last = idx = 1;
+	}
+	
+	void inline extend(int c) {
+		int x = ++idx, p = last; sz[x] = 1;
+		t[x].len = t[last].len + 1;
+		while (p && !t[p].nxt[c]) 
+			t[p].nxt[c] = x, p = t[p].link;
+		if (!p) t[x].link = 1;
+		else {
+			int q = t[p].nxt[c];
+			if (t[p].len + 1 == t[q].len) t[x].link = q;
+			else {
+				int y = ++idx;
+				t[y] = t[q], t[y].len = t[p].len + 1;
+				while (p && t[p].nxt[c] == q)
+					t[p].nxt[c] = y, p = t[p].link;
+				t[q].link = t[x].link = y;
+			}
+		}
+		last = x;
+	}
+} t;
+
 struct GSAM{
 	int idx, last;
 	struct SAM{

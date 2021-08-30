@@ -8,6 +8,11 @@ int inline power(int a, int b) {
 	return res;
 }
 
+void inline add(int &x, int y) {
+	x += y;
+	if (x >= P) x -= P;
+}
+
 void inline preInv(int n) {
 	inv[1] = 1;
 	for (int i = 2; i <= n; i++)

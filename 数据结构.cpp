@@ -41,6 +41,8 @@ struct Linear{
 // 普通线段树
 
 struct Seg{
+	#define ls (p << 1)
+	#define rs (p << 1 | 1)
 	void inline pushup(int p) {
 		
 	}
