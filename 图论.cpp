@@ -595,3 +595,31 @@ struct MCMF2{
         a0 += maxflow, a1 += cost;
     }
 }
+
+// 虚树
+
+void insert(int x) {
+    if (!top) { s[++top] = x; return; }
+    int p = lca(x, s[top]);
+    while (top > 1 && dep[s[top - 1]] >= dep[p]) e[s[top - 1]].pb(s[top]), top--;
+    if (s[top] != p) {
+        e[p].pb(s[top]);
+        s[top] = p;
+    }
+    s[++top] = x;
+}
+
+
+bool inline cmp(int x, int y) {
+    return dfn[x] < dfn[y];
+}
+
+int inline build(vector<int> &A) {
+    top = 0;
+    for (int x: A) {
+        insert(x);
+    }
+    for (int i = 1; i < top; i++)
+        e[s[i]].pb(s[i + 1]);
+    return s[1];
+}
