@@ -6,24 +6,24 @@ int inline cmp(double x, double y) {
 
 
 
-double inline cross(PDD a, PDD b) { return a.x * b.y - a.y * b.x; }
-PDD operator - (const PDD &a, const PDD &b) { return make_pair(a.x - b.x, a.y - b.y); }
-PDD operator + (const PDD &a, const PDD &b) { return make_pair(a.x+ b.x, a.y+ b.y); }
-PDD operator / (const PDD &a, double b) { return make_pair(a.x / b, a.y / b); }
-PDD operator * (const PDD &a, double b) { return make_pair(a.x * b, a.y * b); }
+double inline cross(PDD a, PDD b) { return a.fi * b.se - a.se * b.fi; }
+PDD operator - (const PDD &a, const PDD &b) { return make_pair(a.fi - b.fi, a.se - b.se); }
+PDD operator + (const PDD &a, const PDD &b) { return make_pair(a.fi+ b.fi, a.se+ b.se); }
+PDD operator / (const PDD &a, double b) { return make_pair(a.fi / b, a.se / b); }
+PDD operator * (const PDD &a, double b) { return make_pair(a.fi * b, a.se * b); }
 double inline area(PDD a, PDD b, PDD c) { return cross(b - a, c - a); }
-double inline dot(PDD a, PDD b) { return a.x * b.x + a.y * b.y; }
+double inline dot(PDD a, PDD b) { return a.fi * b.fi + a.se * b.se; }
 double inline len(PDD a) { return sqrt(dot(a, a)); }
 double inline project(PDD a, PDD b, PDD c) { return dot(b - a, c - a) / len(b - a); }
-double inline dist(PDD a, PDD b) { return sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y)); }
-PDD inline rotate(PDD a, double x) { return make_pair ( cos(x) * a.x + sin(x) * a.y, -sin(x) * a.x + cos(x) * a.y ); }
+double inline dist(PDD a, PDD b) { return sqrt((a.fi - b.fi) * (a.fi - b.fi) + (a.se - b.se) * (a.se - b.se)); }
+PDD inline rotate(PDD a, double fi) { return make_pair ( cos(fi) * a.fi + sin(fi) * a.se, -sin(fi) * a.fi + cos(fi) * a.se ); }
 PDD inline norm(PDD a) { return a / len(a); }
 double angle(PDD a, PDD b) {
     return acos(dot(a, b) / len(a) / len(b));
 }
-int sign(double x) {
-    if (fabs(x) < eps) return 0;
-    if (x < 0) return -1;
+int sign(double fi) {
+    if (fabs(fi) < eps) return 0;
+    if (fi < 0) return -1;
     return 1;
 }
 
@@ -42,7 +42,7 @@ bool cmp2 (const Line &a, const Line &b) {
 PDD getInter(PDD p, PDD v, PDD q, PDD w) {
     PDD u = p - q;
     double t = cross(w, u) / cross(v, w);
-    return make_pair(p.x + t * v.x, p.y + t * v.y);
+    return make_pair(p.fi + t * v.fi, p.se + t * v.se);
 }
 
 PDD getInter(Line a, Line b) { return getInter(a.s, a.t - a.s, b.s, b.t - b.s); }
@@ -58,7 +58,7 @@ void inline andrew() {
     sort(p + 1, p + 1 + n);
     for (int i = 1; i <= n; i++) {
         while (top > 1 && area(p[s[top - 1]], p[s[top]], p[i]) < 0) {
-            if (area(p[s[top - 1]], p[s[top]], p[i]) < 0) st[s[top--]] = false;
+            if (area(p[s[top - 1]], p[s[top]], p[i]) <= 0) st[s[top--]] = false;
             else top--;
         }
         st[i] = true, s[++top] = i;
@@ -66,7 +66,7 @@ void inline andrew() {
     st[1] = false;
     for (int i = n; i; i--) {
         if (!st[i]) {
-            while (top > 1 && area(p[s[top - 1]], p[s[top]], p[i]) <s 0) 
+            while (top > 1 && area(p[s[top - 1]], p[s[top]], p[i]) <= 0) 
                 st[s[top--]] = false;
             st[i] = true, s[++top] = i;
         }
@@ -130,7 +130,7 @@ void inline minCircle(PDD a[]) {
 
 
 // 自适应辛普森积分
-double inline f(double x) {
+double inline f(double fi) {
     return ?;
 }
 double inline s(double l, double r) {

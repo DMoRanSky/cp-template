@@ -47,7 +47,7 @@ struct Seg{
 		
 	}
 
-	void inline pushdown(int p, int l, int r, int mid) {
+	void inline pushdown(int p) {
 	
 	}
 
@@ -60,25 +60,24 @@ struct Seg{
 	    build(p << 1 | 1, mid + 1, r);
 	    pushup(p);
 	}
-
 	void change(int p, int l, int r, int x, int y, int k, int c) {
 	    if(x <= l && r <= y) {
 	        return ;
 	    }
-		int mid = (l + r) >> 1;
-		pushdown(p, l, r, mid);
-		if(x <= mid) change(p << 1, l, mid, x, y, k, c);
-		if(mid + 1 <= y) change(p << 1 | 1, mid + 1, r, x, y, k, c);
-		pushup(p);
+	    int mid = (l + r) >> 1;
+	    pushdown(p);
+	    if(x <= mid) change(p << 1, l, mid, x, y, k, c);
+	    if(mid + 1 <= y) change(p << 1 | 1, mid + 1, r, x, y, k, c);
+	    pushup(p);
 	}
 
 	int query(int p, int l, int r, int x, int y) {
-		if(x <= l && r <= y) return ?;
-		int mid = (l + r) >> 1, s = 0;
-		pushdown(p, l, r, mid);
-		if(x <= mid) s += query(p << 1, l, mid, x, y);
-		if(mid + 1 <= y) s += query(p << 1 | 1, mid + 1, r, x, y);
-		return s % P;
+	    if(x <= l && r <= y) return ?;
+	    int mid = (l + r) >> 1, s = 0;
+	    pushdown(p);
+	    if(x <= mid) s += query(p << 1, l, mid, x, y);
+	    if(mid + 1 <= y) s += query(p << 1 | 1, mid + 1, r, x, y);
+	    return s % P;
 	}
 }
 
@@ -577,7 +576,9 @@ namespace DLX2{
 	    return false;
 	}
 
+	// m 行数 init
 	main::
+	// 每一行 hh = tt = idx + 1;
 	add(i, j) if (i, j) = 1
 	dep = 1;
     while(!dfs()) dep++;
