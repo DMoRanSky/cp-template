@@ -642,3 +642,39 @@ struct Hull {
 		return query(su, u, 1) && query(sd, u, -1);
 	}
 } t;
+
+// 珂朵莉树？？
+
+struct E{
+    int l, r, v;
+    bool operator < (const E &b) const {
+        return r < b.r;
+    }
+};
+
+set<E> s;
+ 
+typedef set<E>::iterator SIT;
+ 
+void split(int i) {
+    SIT u = s.lower_bound((E){ 0, i + 1, 0 });
+    if (u == s.end()) return;
+    if (u -> r > i && u -> l <= i) {
+        E t = *u;
+        s.erase(u);
+        s.insert((E){ t.l, i, t.v });
+        s.insert((E){ i + 1, t.r, t.v });
+    }
+}
+ 
+void inline ins(int l, int r, int v) {
+	split(l - 1), split(r);
+    while (1) {
+        SIT u = s.lower_bound((E){ 0, l, 0, 0 });
+        if (u == s.end()) break;
+        if (u -> r > r) break;
+        
+        s.erase(u);
+    }
+    s.insert((E){ l, r, v });
+}

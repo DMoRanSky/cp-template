@@ -577,3 +577,73 @@ int insert(LL x) {
 	}
 	return -1;
 }
+
+// 动态插入一行的高斯消元（可撤销，就是直接复制）
+
+struct Gauss{
+    int a[N][N], m;
+    bool o;
+    void inline ins(int b[]) {
+        for (int i = 1; i <= n + 1; i++) c[i] = b[i];
+        for (int i = 1; i <= n; i++) {
+            if (c[i]) {
+                if (!a[i][i]) {
+                    int inv = power(c[i], P - 2);
+                    for (int j = 1; j <= n + 1; j++)
+                        a[i][j] = (LL)c[j] * inv % P;
+                    for (int j = i + 1; j <= n; j++) {
+                        if (a[j][j] && a[i][j]) {
+                            int t = a[i][j];
+                            for (int k = 1; k <= n + 1; k++)
+                                a[i][k] = (a[i][k] - 1ll * a[j][k] * t % P + P) % P;
+                        }
+                    }
+                    for (int j = 1; j < i; j++) {
+                        if (a[j][i]) {
+                            int t = a[j][i];
+                            for (int k = 1; k <= n + 1; k++)
+                                a[j][k] = (a[j][k] - 1ll * a[i][k] * t % P + P) % P;
+                        }
+                    }
+                    ++m;
+                    return;
+                } else {
+                    int t = c[i];
+                    for (int j = 1; j <= n + 1; j++)
+                        c[j] = (c[j] - 1ll * t * a[i][j] % P + P) % P;
+                }
+            } 
+        }
+        if (c[n + 1]) {
+            o = 1;
+        }
+    }
+    void inline sh() {
+        for (int i = 1; i <= n; i++) {
+            for (int j = 1; j <= n + 1; j++) cout << a[i][j] << " ";
+            cout << endl;
+        }
+    }
+    void inline out() {
+        if (o) {
+            puts("Impossible!");
+        } else {
+            for (int i = 1; i <= m; i++) {
+                for (int j = 1; j <= n + 1; j++) z[j] = 0;
+                z[i] = 1;
+                ins(z);
+            }
+            //puts("Succc!!");
+            memset(ans, 0, sizeof ans);
+            for (int i = 1; i <= n; i++) {
+                int p = 0;
+                for (int j = 1; j <= n; j++)
+                    if (a[i][j]) p = j;
+                ans[p] = a[i][n + 1];
+            }
+            for (int i = 1; i <= n; i++)
+                printf("%d ", ans[i]);
+            puts("");
+        }
+    }
+} t[15];
