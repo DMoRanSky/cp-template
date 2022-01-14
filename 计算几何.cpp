@@ -1,10 +1,15 @@
+
+
+const double eps = 1e-4;
 typedef pair<double, double> PDD;
+struct Line{
+    PDD s, t;
+};
+
 int inline cmp(double x, double y) {
     if (fabs(x - y) < eps) return 0;
     return x < y ? -1 : 1;
 }
-
-
 
 double inline cross(PDD a, PDD b) { return a.fi * b.se - a.se * b.fi; }
 PDD operator - (const PDD &a, const PDD &b) { return make_pair(a.fi - b.fi, a.se - b.se); }
@@ -16,7 +21,8 @@ double inline dot(PDD a, PDD b) { return a.fi * b.fi + a.se * b.se; }
 double inline len(PDD a) { return sqrt(dot(a, a)); }
 double inline project(PDD a, PDD b, PDD c) { return dot(b - a, c - a) / len(b - a); }
 double inline dist(PDD a, PDD b) { return sqrt((a.fi - b.fi) * (a.fi - b.fi) + (a.se - b.se) * (a.se - b.se)); }
-PDD inline rotate(PDD a, double fi) { return make_pair ( cos(fi) * a.fi + sin(fi) * a.se, -sin(fi) * a.fi + cos(fi) * a.se ); }
+// 顺时针转 x
+PDD inline rotate(PDD a, double x) { return make_pair ( cos(x) * a.fi + sin(x) * a.se, -sin(x) * a.fi + cos(x) * a.se ); }
 PDD inline norm(PDD a) { return a / len(a); }
 double angle(PDD a, PDD b) {
     return acos(dot(a, b) / len(a) / len(b));
@@ -143,4 +149,18 @@ double inline asr(double l, double r) {
     double a = s(l, mid), b = s(mid, r);
     if (fabs(a + b - v) < eps) return v;
     else return asr(l, mid) + asr(mid, r);
+}
+
+// https://codeforces.com/contest/1284/problem/E 的怨念 不丢精度的极角排序
+
+LL inline cross(PII x, PII y) {
+    return 1ll * x.fi * y.se - 1ll * x.se * y.fi;
+}
+
+int inline quad(PII x) {
+    if (x.fi >= 0 && x.se >= 0) return 1;
+    if (x.fi <= 0 && x.se >= 0) return 2;
+    if (x.fi <= 0 && x.se <= 0) return 3;
+    if (x.fi >= 0 && x.se <= 0) return 4;
+    return 0;
 }

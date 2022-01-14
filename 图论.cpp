@@ -629,11 +629,11 @@ int inline build(vector<int> &A) {
 
 
 int inline lca(int x, int y) {
- if (dep[x] < dep[y]) swap(x, y);
- for (int i = L - 1; ~i; i--)
-     if (dep[x] - (1 << i) >= dep[y]) x = fa[x][i];
- if (x == y) return x;
- for (int i = L - 1; ~i; i--)
-     if (fa[x][i] != fa[y][i]) x = fa[x][i], y = fa[y][i];
- return fa[x][0];
+     if (dep[x] < dep[y]) swap(x, y);
+     for (int i = L - 1; ~i; i--)
+         if (dep[x] - (1 << i) >= dep[y]) x = fa[x][i];
+     if (x == y) return x;
+     for (int i = L - 1; ~i; i--)
+         if (fa[x][i] != fa[y][i]) x = fa[x][i], y = fa[y][i];
+     return fa[x][0];
 }

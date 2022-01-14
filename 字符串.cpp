@@ -250,7 +250,7 @@ struct Runs{
 struct SAM{
 	int idx, last;
 	struct SAM_{
-		int ch[26], len, link;
+		int nxt[26], len, link;
 	} t[N];
 	void inline init() {
 		last = idx = 1;

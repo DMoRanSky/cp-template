@@ -364,30 +364,154 @@ struct PAM{
 
 // 后缀自动机
 
-struct SAM{
-	struct T{
-		int nxt[26], len, link;
-	} t[SZ << 2];
+struct SAM_{
+    int nxt[26], len, link;
+};
 
-	void inline extend(int c) {
-		int x = ++idx, p = last; sz[x] = 1;
-		t[x].len = t[last].len + 1;
-		while (p && !t[p].nxt[c]) 
-			t[p].nxt[c] = x, p = t[p].link;
-		if (!p) t[x].link = 1;
-		else {
-			int q = t[p].nxt[c];
-			if (t[p].len + 1 == t[q].len) t[x].link = q;
-			else {
-				int y = ++idx;
-				t[y] = t[q], t[y].len = t[p].len + 1;
-				while (p && t[p].nxt[c] == q)
-					t[p].nxt[c] = y, p = t[p].link;
-				t[q].link = t[x].link = y;
-			}
-		}
-		last = x;
-	}
+// n 长度
+
+struct SAM{
+    SAM_ t[N << 1];
+    int last, idx, pos[N << 1], fa[N << 1][S];
+    vector<int> g[N << 1];
+    int s[N];
+    void inline extend(int c) {
+        int x = ++idx, p = last; t[x].len = t[p].len + 1;
+        while (p && !t[p].nxt[c])
+            t[p].nxt[c] = x, p = t[p].link;
+        if (!p) t[x].link = 1;
+        else {
+            int q = t[p].nxt[c];
+            if (t[p].len + 1 == t[q].len) t[x].link = q;
+            else {
+                int y = ++idx; t[y] = t[q];
+                t[y].len = t[p].len + 1;
+                while (p && t[p].nxt[c] == q)
+                    t[p].nxt[c] = y, p = t[p].link;
+                t[x].link = t[q].link = y;
+            }
+        }
+        last = x;
+    }
+    int st[N << 2][S], Lg[N << 2], loc[N << 2], scnt, ind[N], Lf[N << 1], Rf[N << 1];
+    
+    // ind 以 i 为后缀的点
+    void inline build(int a[], int n) {
+        last = idx = 1;
+        // buildTree
+        for (int i = 1; i <= n; i++) extend(a[i]), pos[last] = i, ind[i] = last, s[i] = a[i];
+        for (int i = 2; i <= idx; i++) g[t[i].link].pb(i), fa[i][0] = t[i].link;
+        
+    }
+
+    void dfsf(int u) {
+        for (int i = 1; i < S; i++)
+            fa[u][i] = fa[fa[u][i - 1]][i - 1];
+        for (int v: g[u]) {
+            dfsf(v);
+            pos[u] = pos[v];
+        }
+    }
+
+    // 维护倍增祖先，以及每个点的任意一个 endpos（于 pos
+
+    void inline buildFA() {
+        // endpos - fa
+        dfsf(1);
+    }
+
+    void dfsl(int u) {
+        Lf[u] = ++scnt;
+        st[scnt][0] = t[u].len;
+        
+        for (int v: g[u]) {
+            dfsl(v);
+            st[++scnt][0] = t[u].len;
+        }
+    }
+
+    // 最长公共后缀预处理：ST 表
+
+    void inline buildLSP() {
+        dfsl(1);
+        Lg[0] = -1;
+        for (int i = 1; i <= scnt; i++) Lg[i] = Lg[i >> 1] + 1;
+        for (int j = 1; j <= Lg[scnt]; j++) {
+            for (int i = 1; i + (1 << j) - 1 <= scnt; i++) {
+                st[i][j] = min(st[i][j - 1], st[i + (1 << (j - 1))][j - 1]);
+            }
+        }
+    }
+
+    // 倍增定位长度为 l 的子串
+
+    int inline fixPos(int p, int l) {
+        for (int i = S - 1; ~i; i--)
+            if (fa[p][i] && t[fa[p][i]].len >= l) p = fa[p][i];
+        return p;
+    }
+
+    // 最长公共后缀
+
+    int inline lsp(int i, int j) {
+        int l = Lf[ind[i]], r = Lf[ind[j]];
+        if (l > r) swap(l, r);
+        int k = Lg[r - l + 1];
+        return min(st[l][k], st[r - (1 << k) + 1][k]);
+    }
+    int d[N << 2], tot;
+
+    LL F[N << 1], G[N << 1];
+     
+    bool vis[N << 1];
+
+    void dfs2(int u) {
+        vis[u] = 1;
+        for (int i = 0; i < 26; i++) {
+            int v = t[u].nxt[i];
+            if (v && !vis[v]) dfs2(v);
+        }
+        d[++tot] = u;
+    }
+
+    int dfn[N << 1], dfncnt, ed[N << 1], pre[N << 1], top[N << 1];
+
+    void dfs3(int u, int tp) {
+        dfn[u] = ++dfncnt; pre[dfn[u]] = u;
+        top[u] = tp;
+        for (int i = 0; i < 26; i++) {
+            int v = t[u].nxt[i];
+            if (v && !dfn[v] && F[v] < F[u] * 2 && G[u] < G[v] * 2) dfs3(v, tp);
+        }
+        ed[u] = pre[dfncnt];
+    }   
+
+    // DAG 剖分。dfn 序列。
+
+    void inline chainDiv() {
+        dfs2(1);
+        memset(vis, 0, sizeof vis);
+        F[1] = 1;
+        for (int i = 1; i <= idx; i++) G[i] = 1;
+        for (int j = idx; j; j--) {
+            int u = d[j];
+            for (int i = 0; i < 26; i++) {
+                int v = t[u].nxt[i]; 
+                if (v) F[v] += F[u];
+            }
+        }
+        for (int j = 1; j <= idx; j++) {
+            int u = d[j];
+            for (int i = 0; i < 26; i++) {
+                int v = t[u].nxt[i]; 
+                if (v) G[u] += G[v];
+            }
+        }
+        for (int j = idx; j; j--) {
+            int u = d[j];
+            if (!dfn[u]) dfs3(u, u);
+        }
+    }
 }
 
 // Cdq 分治
@@ -678,3 +802,33 @@ void inline ins(int l, int r, int v) {
     }
     s.insert((E){ l, r, v });
 }
+
+// Hashmap
+
+
+struct E{
+	int next, v, w;
+};
+
+const int MOD = 999997;
+
+struct Hash{
+ 	E e[MOD];
+ 	int numE, head[MOD];
+ 	void inline clear() {
+ 		for (int i = 1; i <= numE; i++)
+ 			head[e[i].v % MOD] = 0;
+ 		numE = 0;
+ 	}
+ 	int &operator[] (int x) {
+ 		int t = x % MOD;
+ 		for (int i = head[t]; i; i = e[i].next) {
+ 			if (e[i].v == x) {
+ 				return e[i].w;
+ 			}
+ 		}
+ 		e[++numE] = (E) { head[t], x, 0 };
+ 		head[t] = numE;
+ 		return e[numE].w;
+ 	}
+} t
