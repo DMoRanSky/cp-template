@@ -164,3 +164,61 @@ int inline quad(PII x) {
     if (x.fi >= 0 && x.se <= 0) return 4;
     return 0;
 }
+
+// PII andrew + mincowf
+
+LL operator * (PII a, PII b) {
+    return (LL)a.fi * b.se - (LL)a.se * b.fi;
+}
+
+PII operator + (PII a, PII b) {
+    return mp(a.fi + b.fi, a.se + b.se);
+}
+
+PII operator - (PII a, PII b) {
+    return mp(a.fi - b.fi, a.se - b.se);
+}
+vector<PII> inline andrew(vector<PII> a) {
+    int n = a.size();
+    top = 0;
+    sort(a.begin(), a.end());
+    for (int i = 0; i < n; i++) {
+        while (top > 1 && (a[i] - a[s[top - 1]]) * (a[s[top]] - a[s[top - 1]]) > 0) {
+            vis[s[top--]] = 0;
+        }
+        vis[i] = 1, s[++top] = i;
+    }
+    vis[0] = 0;
+    for (int i = n - 1; i >= 0; i--) {
+        if (!vis[i]) {
+            while (top > 1 && (a[i] - a[s[top - 1]]) * (a[s[top]] - a[s[top - 1]]) > 0)
+                vis[s[top--]] = 0;
+            vis[i] = 1, s[++top] = i;
+        }
+    }
+    --top;
+    vector<PII> ret;
+    for (int i = 1; i <= top; i++) ret.pb(a[s[i]]);
+    for (int i = 0; i < n; i++) vis[i] = 0;
+    return ret;
+}
+
+// 有
+
+vector<PII> calc(vector<PII> a, vector<PII> b) {
+    vector<PII> c;
+    c.pb(a[0] + b[0]);
+    vector<PII> dx, dy;
+    for (int i = 1; i < a.size(); i++) dx.pb(a[i] - a[i - 1]);
+    dx.pb(a[0] - a.back());
+    for (int i = 1; i < b.size(); i++) dy.pb(b[i] - b[i - 1]);
+    dy.pb(b[0] - b.back());
+    int i = 0, j = 0;
+    while (i < dx.size() || j < dy.size()) {
+        if (j == dy.size() || (i < dx.size() && dx[i] * dy[j] > 0))
+            c.pb(c.back() + dx[i++]);
+        else c.pb(c.back() + dy[j++]);
+    }
+    c.pop_back();
+    return c;
+}

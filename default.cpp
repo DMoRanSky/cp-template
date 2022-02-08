@@ -20,8 +20,8 @@ template <typename T> void inline read(T &x) {
     while (s <= '9' && s >= '0') x = x * 10 + (s ^ 48), s = getchar();
     x *= f;
 }
- 
-int main() {
 
+int main() {
+    
     return 0;
 }

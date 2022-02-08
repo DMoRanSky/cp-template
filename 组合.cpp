@@ -19,6 +19,8 @@ void inline preInv(int n) {
         inv[i] = ((LL)P - P / i) * inv[P % i] % P;
 }
 
+int fact[N], infact[N];
+
 void inline factPrework(int n) {
     fact[0] = infact[0] = 1;
     for (int i = 1; i <= n; i++) fact[i] = (LL)fact[i - 1] * i % P;
