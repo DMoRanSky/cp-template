@@ -832,3 +832,63 @@ struct Hash{
  		return e[numE].w;
  	}
 } t
+
+
+// 李超树
+struct LCS{
+	int f[SZ], idx;
+ 
+	struct T{
+		int l, r;
+	} t[SZ];
+	 
+	#define ls t[p].l
+	#define rs t[p].r
+	 
+	LL get(int v, int x) {
+		return 1ll * x * B[v] + A[v];
+	}
+	 
+	void ins(int &p, int l, int r, int x, int y, int v) {
+		if (!p) p = ++idx;
+		int mid = (l + r) >> 1;
+		if (x <= l && r <= y) {
+			if (!f[p]) f[p] = v;
+			else {
+				int w = f[p];
+				LL v1 = get(w, mid), v2 = get(v, mid);
+				if (l == r) {
+					if (v2 < v1) f[p] = v; 
+				} else if (B[w] == B[v]) {
+					if (A[v] < A[w]) f[p] = v;
+				} else if (B[w] < B[v]) {
+					if (v2 <= v1) {
+						f[p] = v;
+						ins(rs, mid + 1, r, x, y, w);
+					} else {
+						ins(ls, l, mid, x, y, v);
+					}
+				} else {
+					if (v2 <= v1) {
+						f[p] = v;
+						ins(ls, l, mid, x, y, w);
+					} else {
+						ins(rs, mid + 1, r, x, y, v);
+					}
+				}
+			}
+			return;
+		}
+		if (x <= mid) ins(ls, l, mid, x, y, v);
+		if (mid < y) ins(rs, mid + 1, r, x, y, v);
+	}
+	LL query(int p, int l, int r, int x) {
+		LL ret = 9e18;
+		if (f[p]) ret = get(f[p], x);
+		if (l == r) return ret;
+		int mid = (l + r) >> 1;
+		if (x <= mid) chkMin(ret, query(ls, l, mid, x));
+		else chkMin(ret, query(rs, mid + 1, r, x));
+		return ret;
+	}
+}

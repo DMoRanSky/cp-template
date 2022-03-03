@@ -637,3 +637,34 @@ int inline lca(int x, int y) {
          if (fa[x][i] != fa[y][i]) x = fa[x][i], y = fa[y][i];
      return fa[x][0];
 }
+
+// 圆方树
+
+int dfn[N], low[N], dfncnt, cnt;
+ 
+int s[N], top;
+ 
+void inline Add(int x, int y) {
+    g[x].pb(y), g[y].pb(x);
+}
+ 
+void tarjan(int u, int fa) {
+    dfn[u] = low[u] = ++dfncnt;
+    s[++top] = u;
+    for (int v: e[u]) {
+        if (v == fa) continue;
+        if (!dfn[v]) {
+            tarjan(v, u);
+            chkMin(low[u], low[v]);
+            if (low[v] >= dfn[u]) {
+                int y; ++cnt;
+                do {
+                    y = s[top--], Add(y, cnt);
+                } while (y != v);
+                Add(cnt, u);
+            }
+        } else {
+            chkMin(low[u], dfn[v]);
+        }
+    }
+}
