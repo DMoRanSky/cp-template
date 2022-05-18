@@ -138,18 +138,25 @@ void inline linear() {
 // 矩阵
 
 struct Mat{
-	int n, m, w[N][N];
-	Mat operator * (const Mat &b) const {
-		Mat c; c.n = n, c.m = b.m;
-		memset(c.w, 0, sizeof c.w);
-		for (int i = 0; i < n; i++)
-			for (int j = 0; j < b.m; j++)
-				for (int k = 0; k < m; k++)
-					c.w[i][j] = (c.w[i][j] + (LL)w[i][k] * b.w[k][j]) % P;
-		return c;
-	}
+    int n, m, w[N][N];
+    Mat operator * (const Mat &b) const {
+        Mat c; c.n = n, c.m = b.m;
+        memset(c.w, 0, sizeof c.w);
+        for (int i = 0; i < n; i++)
+            for (int j = 0; j < b.m; j++)
+                for (int k = 0; k < m; k++)
+                    c.w[i][j] = (c.w[i][j] + (LL)w[i][k] * b.w[k][j]) % P;
+        return c;
+    }
+    Mat operator + (const Mat &b) const {
+        Mat c; c.n = n, c.m = b.m;
+        memset(c.w, 0, sizeof c.w);
+        for (int i = 0; i < n; i++)
+            for (int j = 0; j < b.m; j++)
+                c.w[i][j] = (w[i][j] + b.w[i][j]) % P;
+        return c;
+    }
 } res;
-
 bool inline gauss() {
 	int r, c;
 	for (r = 1, c = 1; c <= n; c++) {
@@ -647,3 +654,29 @@ struct Gauss{
         }
     }
 } t[15];
+
+// 万能欧几里得
+
+struct Data{
+} IN;
+// IN 无贡献时。
+
+
+// 信息合并
+Data operator + (const Data &a, const Data &b) {
+
+}
+
+// 信息叠加 b 次
+Data operator * (const Data &a, int b) {
+
+}
+
+Data calc(LL n, LL p, LL q, LL r, Data A, Data B) {
+	if (!n) return IN;
+    r %= q;
+	if (p >= q) return calc(n, p % q, q, r, B * (p / q) + A, B);
+    LL x = ((I)p * n + r) / q;
+    if (!x) return A * n;
+    return A * ((q - r - 1) / p) + B + calc(x - 1, q, p, q - r - 1, B, A) + A * (n - ((I)q * x - r - 1 + p) / p + 1); 
+}
