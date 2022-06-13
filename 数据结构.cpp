@@ -835,60 +835,37 @@ struct Hash{
 
 
 // 李超树
-struct LCS{
-	int f[SZ], idx;
- 
-	struct T{
+
+struct LC{
+	struct Tree{
 		int l, r;
-	} t[SZ];
-	 
-	#define ls t[p].l
-	#define rs t[p].r
-	 
-	LL get(int v, int x) {
-		return 1ll * x * B[v] + A[v];
+		Line v;
+	} t[N << 2];
+	LL inline calc(Line e, LL x) {
+		return e.k * x + e.b;
 	}
-	 
-	void ins(int &p, int l, int r, int x, int y, int v) {
-		if (!p) p = ++idx;
-		int mid = (l + r) >> 1;
-		if (x <= l && r <= y) {
-			if (!f[p]) f[p] = v;
-			else {
-				int w = f[p];
-				LL v1 = get(w, mid), v2 = get(v, mid);
-				if (l == r) {
-					if (v2 < v1) f[p] = v; 
-				} else if (B[w] == B[v]) {
-					if (A[v] < A[w]) f[p] = v;
-				} else if (B[w] < B[v]) {
-					if (v2 <= v1) {
-						f[p] = v;
-						ins(rs, mid + 1, r, x, y, w);
-					} else {
-						ins(ls, l, mid, x, y, v);
-					}
-				} else {
-					if (v2 <= v1) {
-						f[p] = v;
-						ins(ls, l, mid, x, y, w);
-					} else {
-						ins(rs, mid + 1, r, x, y, v);
-					}
-				}
-			}
+	int idx, rt;
+	void inline clr() {
+		idx = 0; rt = 0;
+	}
+	// 这里写法非常简洁的原因是，让计算机人工帮你判断了单调 / 需要 upd 的位置，事实上只会走一边。
+	void inline ins(int &p, int l, int r, Line e) {
+		if (!p) {
+			t[p = ++idx] = (Tree) { 0, 0, e };
 			return;
 		}
-		if (x <= mid) ins(ls, l, mid, x, y, v);
-		if (mid < y) ins(rs, mid + 1, r, x, y, v);
-	}
-	LL query(int p, int l, int r, int x) {
-		LL ret = 9e18;
-		if (f[p]) ret = get(f[p], x);
-		if (l == r) return ret;
 		int mid = (l + r) >> 1;
-		if (x <= mid) chkMin(ret, query(ls, l, mid, x));
-		else chkMin(ret, query(rs, mid + 1, r, x));
+		if (calc(t[p].v, mid) > calc(e, mid)) swap(e, t[p].v);
+		if (calc(e, l) < calc(t[p].v, l)) ins(t[p].l, l, mid, e);
+		if (calc(e, r) < calc(t[p].v, r)) ins(t[p].r, mid + 1, r, e); 
+	}
+	LL ask(int p, int l, int r, int x) {
+		if (!p) return INF;
+		if (l == r) return calc(t[p].v, x);
+		int mid = (l + r) >> 1; LL ret = calc(t[p].v, x);
+		if (x <= mid) chkMin(ret, ask(t[p].l, l, mid, x));
+		else chkMin(ret, ask(t[p].r, mid + 1, r, x));
 		return ret;
 	}
-}
+	
+} ;

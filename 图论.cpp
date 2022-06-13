@@ -616,6 +616,9 @@ bool inline cmp(int x, int y) {
 
 int inline build(vector<int> &A) {
     top = 0;
+
+    sort(A.begin(), A.end(), cmp);
+   
     for (int x: A) {
         insert(x);
     }
