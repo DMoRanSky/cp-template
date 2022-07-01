@@ -147,6 +147,11 @@ struct Fhq{
 }
 
 struct LCT{
+	#define get(x) (ch[fa[x]][1] == x)
+	#define isRoot(x) (ch[fa[x]][0] != x && ch[fa[x]][1] != x)
+	#define ls ch[p][0]
+	#define rs ch[p][1]
+
 	int ch[N][2], fa[N], mx[N], w[N], rev[N];
 
 	void inline pushup(int p) {
@@ -869,3 +874,99 @@ struct LC{
 	}
 	
 } ;
+
+// 全局平衡二叉树
+
+
+vector<int> g[N];
+
+int lim[N];
+
+bool vis[N];
+
+int fa[N], sz[N], son[N], d[N];
+
+struct Mat{
+	// 定义矩阵的地方
+	Mat operator * (const Mat &b) const {
+		
+	}
+};
+
+void dfs1(int u) {
+	sz[u] = 1;
+	for (int v: g[u]) {
+		if (v == fa[u]) continue;
+		fa[v] = u;
+		d[v] = d[u] + 1;
+		dfs1(v);
+		sz[u] += sz[v];
+		if (sz[v] > sz[son[u]]) son[u] = v;
+	}
+}
+
+int len, b[N], val[N], rt[N], ps[N];
+
+struct T{
+	int l, r, f;
+	Mat v, s;
+} t[N];
+
+int inline getM(int x, int y) {
+	int mn = 2e9, p = -1;
+	for (int i = x; i <= y; i++) 
+		if (chkMin(mn, max(val[i - 1] - val[x - 1], val[y] - val[i]))) p = i;
+	return p;
+}
+
+#define ls t[p].l
+#define rs t[p].r
+
+void pu(int p) {
+	if (ls && rs) t[p].s = t[rs].s * t[p].v * t[ls].s;
+	else if (ls) t[p].s = t[p].v * t[ls].s;
+	else if (rs) t[p].s = t[rs].s * t[p].v;
+	else t[p].s = t[p].v;
+}
+
+void inline bd(int &p, int l, int r, int F) {
+	if (l > r) return;
+	int mid = getM(l, r);
+	p = b[mid]; 
+	t[p].f = F;
+	bd(ls, l, mid - 1, p), bd(rs, mid + 1, r, p);
+	pu(p);
+}
+
+void inline remake(int u) {
+	// 更新 u 的子树了，更新矩阵
+}
+
+void inline updF(int v) {
+	// u 的轻儿子 v 变了，更新轻儿子对自己的影响
+}
+
+void inline bd(int tp) {
+	int x = tp; vector<int> z;
+	while (x) z.pb(x), x = son[x];
+	for (int u: z) {
+		for (int v: g[u]) 
+			if (v != fa[u] && v != son[u]) bd(v), updF(v);
+		remake(u);
+	}
+	len = 0;
+	for (int v: z) b[++len] = v, val[len] = sz[v] - sz[son[v]];
+	for (int i = 1; i <= len; i++) val[i] += val[i - 1];
+	bd(rt[tp], 1, len, 0);
+	ps[rt[tp]] = tp;
+}
+
+void inline sop(int x) {
+	while (x) {
+		remake(x); int p = x, y = 0;
+		while (p) y = ps[p], pu(p), p = t[p].f;
+		if (!fa[y]) break;
+		updF(y), x = fa[y];
+	}
+}
+
