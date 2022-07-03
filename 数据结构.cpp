@@ -970,3 +970,61 @@ void inline sop(int x) {
 	}
 }
 
+// K-D Tree
+
+struct Node{
+	int x[2], l, r, L, R;
+	bool operator < (const Node &b) const {
+		return x[D] < b.x[D];
+	}
+} t[N];
+
+#define ls t[p].l
+#define rs t[p].r
+
+
+void pu(int p) {
+	// pushup
+}
+
+void inline pd(int p) {
+	// pushdown
+}
+
+void bd(int &p, int l, int r, int z) {
+	int len = r - l + 1;
+	D = z;
+	int mid = (l + r) >> 1;
+	nth_element(t + l, t + mid, t + 1 + r);
+	p = mid;
+	t[p].L = l, t[p].R = r;
+	if (l != mid) bd(ls, l, mid - 1, z ^ 1), t[ls].f = p;
+	if (mid != r) bd(rs, mid + 1, r, z ^ 1), t[rs].f = p;
+	pu(p);
+}
+
+
+void chg(int p, int l, int r, int x, int k) {
+	// return 条件
+	int mid = (l + r) >> 1; pd(p);
+	// chg p
+	if (l != mid) chg(ls, l, mid - 1, x, k);
+	if (mid != r) chg(rs, mid + 1, r, x, k);
+	pu(p);
+}
+
+void update(int p) {
+	if (t[p].f) update(t[p].f);
+	pd(p);
+}
+
+// 自底向上
+
+void inline fl(int x) {
+	int p = pos[x];
+	update(p);
+	// chg x
+	while (p) {
+		pu(p); p = t[p].f;
+	}
+}
