@@ -43,40 +43,40 @@ struct Linear{
 struct Seg{
 	#define ls (p << 1)
 	#define rs (p << 1 | 1)
-	void inline pushup(int p) {
+	void inline pu(int p) {
 		
 	}
 
-	void inline pushdown(int p) {
+	void inline pd(int p) {
 	
 	}
 
-	void build(int p, int l, int r) {
+	void bd(int p, int l, int r) {
 		if(l == r) { 
 			return; 
 		}
 		int mid = (l + r) >> 1;
-	    build(p << 1, l, mid);
-	    build(p << 1 | 1, mid + 1, r);
-	    pushup(p);
+	    bd(ls, l, mid);
+	    bd(rs, mid + 1, r);
+	    pu(p);
 	}
-	void change(int p, int l, int r, int x, int y, int k, int c) {
+	void chg(int p, int l, int r, int x, int y, int k, int c) {
 	    if(x <= l && r <= y) {
 	        return ;
 	    }
 	    int mid = (l + r) >> 1;
-	    pushdown(p);
-	    if(x <= mid) change(p << 1, l, mid, x, y, k, c);
-	    if(mid + 1 <= y) change(p << 1 | 1, mid + 1, r, x, y, k, c);
-	    pushup(p);
+	    pd(p);
+	    if(x <= mid) chg(ls, l, mid, x, y, k, c);
+	    if(mid + 1 <= y) chg(rs, mid + 1, r, x, y, k, c);
+	    pu(p);
 	}
 
-	int query(int p, int l, int r, int x, int y) {
+	int qry(int p, int l, int r, int x, int y) {
 	    if(x <= l && r <= y) return ?;
 	    int mid = (l + r) >> 1, s = 0;
-	    pushdown(p);
-	    if(x <= mid) s += query(p << 1, l, mid, x, y);
-	    if(mid + 1 <= y) s += query(p << 1 | 1, mid + 1, r, x, y);
+	    pd(p);
+	    if(x <= mid) s += qry(ls, l, mid, x, y);
+	    if(mid + 1 <= y) s += qry(rs, mid + 1, r, x, y);
 	    return s % P;
 	}
 }
