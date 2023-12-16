@@ -1,3 +1,70 @@
+// 原根 / 封装不太好
+
+
+int n, D, phi[N], primes[N], tot, d[N], len;
+int ans[N], cnt;
+
+bool st[N], pr[N];
+
+void inline init() {
+	phi[1] = 1, pr[2] = pr[4] = true;
+	for (int i = 2; i < N; i++) {
+		if (!st[i]) primes[tot++] = i, phi[i] = i - 1;
+		for (int j = 0; i * primes[j] < N; j++) {
+			st[i * primes[j]] = true;
+			if (i % primes[j] == 0) {
+				phi[i * primes[j]] = phi[i] * primes[j];
+				break;
+			}
+			phi[i * primes[j]] = phi[i] * (primes[j] - 1);
+		}
+	}
+	for (int i = 1; i < tot; i++) {
+		for (LL j = primes[i]; j < N; j *= primes[i]) pr[j] = true;
+		for (LL j = 2 * primes[i]; j < N; j *= primes[i]) pr[j] = true;
+	}
+}
+
+
+void inline factor(int m) {
+	len = 0;
+	for (int i = 0; i < tot && primes[i] * primes[i] <= m; i++) {
+		int j = primes[i];
+		if (m % j == 0) {
+			d[len++] = j;
+			while (m % j == 0) m /= j;
+		}
+	}
+	if (m > 1) d[len++] = m;
+}
+
+int inline power(int a, int b, int P) {
+	int res = 1;
+	while (b) {
+		if (b & 1) res = (LL)res * a % P;
+		a = (LL)a * a % P;
+		b >>= 1;
+	}
+	return res;
+}
+
+bool inline check(int x, int P) {
+	if (power(x, phi[P], P) != 1) return false;
+	for (int i = 0; i < len; i++)
+		if(power(x, phi[P] / d[i], P) == 1) return false;
+	return true;
+}
+
+// 输入 P，返回最小原根
+
+int inline get(int P) {
+	for (int i = 1; i < P; i++) 
+		if (check(i, P)) return i;
+	return 0;
+}
+
+// ---
+
 LL inline exgcd(LL a, LL b, LL &x, LL &y) {
 	if (b == 0) {
 		x = 1, y = 0;
