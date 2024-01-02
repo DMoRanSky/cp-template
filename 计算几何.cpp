@@ -178,6 +178,11 @@ PII operator + (PII a, PII b) {
 PII operator - (PII a, PII b) {
     return mp(a.fi - b.fi, a.se - b.se);
 }
+
+LL dot (PII a, PII b) {
+    return (LL)a.fi * a.se + (LL)b.fi * b.se;
+}
+
 vector<PII> inline andrew(vector<PII> a) {
     int n = a.size();
     top = 0;
@@ -214,11 +219,21 @@ vector<PII> calc(vector<PII> a, vector<PII> b) {
     for (int i = 1; i < b.size(); i++) dy.pb(b[i] - b[i - 1]);
     dy.pb(b[0] - b.back());
     int i = 0, j = 0;
-    while (i < dx.size() || j < dy.size()) {
-        if (j == dy.size() || (i < dx.size() && dx[i] * dy[j] > 0))
+    while (i < dx.size() && j < dy.size()) {
+        if (dx[i] * dy[j] > 0)
             c.pb(c.back() + dx[i++]);
-        else c.pb(c.back() + dy[j++]);
+        else if (dx[i] * dy[j] == 0 && c.size() > 1) {
+            // 共线放一起不然是错的！！！！
+            if (dot(c.back() - c[c.size() - 2], dx[i]) > 0)
+                c.pb(c.back() + dx[i++]);
+            else c.pb(c.back() + dy[j++]);
+        } else {
+            c.pb(c.back() + dy[j++]);
+        }
     }
+    while (i < dx.size()) c.pb(c.back() + dx[i++]);
+    while (j < dy.size()) c.pb(c.back() + dy[j++]);
+    assert(c.back() == c[0]);
     c.pop_back();
     return c;
 }
