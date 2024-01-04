@@ -120,7 +120,7 @@ LL mul(LL x, LL y, LL P) {
 }
 
 
-// (a1, m1) (a2, m2) return a
+// x mod m = a (m1, a1) (m2, a2) return x
 
 PLL inline merge(PLL A, PLL B) {
 	LL a1 = A.fi, b1 = A.se;
