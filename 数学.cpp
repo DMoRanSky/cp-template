@@ -1,3 +1,72 @@
+// 扩域
+struct C{
+    int x, y;
+    // x + y * sqrt(o);
+};
+ 
+int o = 2;
+ 
+// fn = Aa^n + Bb^n
+ 
+int inline power(int a, int b) {
+    int ret = 1;
+    while (b) {
+        if (b & 1) ret = 1ll * ret * a % P;
+        a = 1ll * a * a % P;
+        b >>= 1;
+    }
+    return ret;
+}
+ 
+ 
+ 
+ 
+int mod(int x) {
+    return x >= P ? x - P : x;
+}
+ 
+C operator + (const C &a, const C &b) {
+    return (C) { mod(a.x + b.x), mod(a.y + b.y) };
+};
+ 
+C operator * (const C &a, const C &b) {
+    C c;
+    c.x = (1ll * a.x * b.x + 1ll * a.y * b.y % P * o) % P;
+    c.y = (1ll * a.x * b.y + 1ll * a.y * b.x) % P;
+    return c;
+};
+ 
+C operator * (const C &a, const int &b) {
+    C c;
+    c.x = 1ll * a.x * b % P;
+    c.y = 1ll * a.y * b % P;
+    
+    return c;
+};
+ 
+ 
+C inline power(C a, int b) {
+    C ret = (C) { 1, 0 } ;
+    while (b) {
+        if (b & 1) ret = ret * a;
+        a = a * a;
+        b >>= 1;
+    }
+    return ret;
+}
+ 
+C operator / (const C &a, const C &b) {
+    C c, d;
+    c = a;
+    d = b;
+    d.y = mod(P - d.y);
+    c = c * d;
+    int I = (((LL)b.x * b.x - (LL)b.y * b.y * o) % P + P) % P;
+    I = power(I, P - 2);
+    c = c * I;
+    return c;
+};
+
 // 原根 / 封装不太好
 
 
