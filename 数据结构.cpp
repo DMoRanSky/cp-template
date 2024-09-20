@@ -335,39 +335,9 @@ struct LeftistTree{
 	}
 }
 
-// ---
-// 回文自动机
-struct PAM{
-	int n, ch[SZ][26], fail[SZ], len[SZ], sz[SZ], idx = -1, lastans, last;
 
-	char s[SZ];
 
-	int inline newNode(int x) {	len[++idx] = x; return idx; }
-	int inline getFail(int x) {
-		while (s[n - len[x] - 1] != s[n]) x = fail[x];
-		return x;
-	}
-
-	int inline insert(char c) {
-		int k = c - 'a';
-		s[++n] = c;
-		int p = getFail(last), x;
-		if (!ch[p][k]) {
-			x = newNode(len[p] + 2);
-			fail[x] = ch[getFail(fail[p])][k];
-			ch[p][k] = x, sz[x] = 1 + sz[fail[x]];
-		} else x = ch[p][k];
-		last = x;
-		return sz[x];
-	}
-
-	void inline build() {
-		newNode(0), newNode(-1);
-		s[0] = '$', fail[0] = 1, last = 0;
-	}
-}
-
-// 后缀自动机
+// 后缀自动机 + DAG 剖分
 
 struct SAM_{
     int nxt[26], len, link;
