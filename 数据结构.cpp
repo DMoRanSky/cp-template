@@ -998,3 +998,78 @@ void inline fl(int x) {
 		pu(p); p = t[p].f;
 	}
 }
+
+
+// 线段树合并与分裂
+
+struct Seg{
+	int idx;
+
+struct T{
+	int l, r;
+	LL v;
+} t[N * 22];
+
+void inline pushup(int p) {
+	t[p].v = t[t[p].l].v + t[t[p].r].v;
+}
+
+void build(int &p, int l, int r) {
+	if (!p) p = ++idx;
+	if (l == r) {
+		t[p].v = a[l];
+		return;
+	}
+	int mid = (l + r) >> 1;
+	build(t[p].l, l, mid);
+	build(t[p].r, mid + 1, r);
+	pushup(p);
+}
+
+void change(int &p, int &q, int l, int r, int x, int y) {
+	if (x <= l && r <= y) {
+		q = p; p = 0;
+		return;
+	}
+	if (!q) q = ++idx;
+	int mid = (l + r) >> 1;
+	if (x <= mid) change(t[p].l, t[q].l, l, mid, x, y);
+	if (mid < y) change(t[p].r, t[q].r, mid + 1, r, x, y);
+	pushup(p); pushup(q);
+}
+
+void merge(int &p, int &q, int l, int r) {
+	if (!p) return;
+	if (!q) { q = p; return; }
+	if (l == r) { t[q].v += t[p].v; return; }
+	int mid = (l + r) >> 1;
+	merge(t[p].l, t[q].l, l, mid);
+	merge(t[p].r, t[q].r, mid + 1, r);
+	pushup(q);
+}
+
+void insert(int &p, int l, int r, int x, int k) {
+	if (!p) p = ++idx;
+	if (l == r) { t[p].v += k; return ; }
+	int mid = (l + r) >> 1;
+	if (x <= mid) insert(t[p].l, l, mid, x, k);
+	else insert(t[p].r, mid + 1, r, x, k);
+	pushup(p);
+}
+
+LL query(int p, int l, int r, int x, int y) {
+	if (!p) return 0;
+	if (x <= l && r <= y) return t[p].v;
+	int mid = (l + r) >> 1; LL res = 0;
+	if (x <= mid) res += query(t[p].l, l, mid, x, y);
+	if (mid < y) res += query(t[p].r, mid + 1, r, x, y);
+	return res;
+}
+
+int kth(int p, int l, int r, int k) {
+	if (l == r) return l;
+	int mid = (l + r) >> 1;
+	if (k <= t[t[p].l].v) return kth(t[p].l, l, mid, k);
+	else return kth(t[p].r, mid + 1, r, k - t[t[p].l].v);
+}
+}

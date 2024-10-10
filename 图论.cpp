@@ -683,3 +683,69 @@ void tarjan(int u, int fa) {
         }
     }
 }
+
+// 树上路径交
+
+// 从 $lca(u, x), lca(u, y), lca(v, x),lca(v, y)$ 四个点找深度最大的两个点，记为 $p_1, p_2$。
+
+// * 若 $p_1 = p_2$ 且 $dep_{p1} < \max(dep_{lca(x, y)}, dep_{lca(u, v)})$ 那么无相交路径
+// * 否则相交路径就是 $p_1$ 到 $p_2$
+
+PII inline query(int u, int v, int x, int y) {
+    int p[4] = { lca(u, x), lca(u, y), lca(v, x), lca(v, y)};
+    int w = lca(u, v), z = lca(x, y);
+    int p1 = 0, p2 = 0;
+    for (int i = 0; i < 4; i++)
+        if (dep[p[i]] > dep[p1]) p2 = p1, p1 = p[i];
+        else if (dep[p[i]] > dep[p2]) p2 = p[i];
+    if (p1 == p2 && (dep[p1] < dep[w] || dep[p1] < dep[z])) return mp(-1, -1);
+    // p1 - p2 是子路径
+    return mp(p1, p2);
+}
+
+// O(1) LCA
+
+const int N = 5e5 + 5, L = 19;
+
+int n, m, dfncnt, rt, st[L][N], Lg[N], dfn[N], d[N], fa[N];
+
+vector<int> g[N];
+
+void dfs0(int u) {
+    st[0][dfncnt] = fa[u];
+    dfn[u] = ++dfncnt;
+    for (int v: g[u]) {
+        if (v == fa[u]) continue;
+        d[v] = d[u] + 1;
+        fa[v] = u;
+        dfs0(v);
+    }
+}
+
+int inline cmp(int x, int y) {
+    return d[x] < d[y] ? x : y;
+}
+
+void inline bd() {
+    Lg[0] = -1;
+    for (int i = 1; i <= n; i++)
+        Lg[i] = Lg[i >> 1] + 1;
+    for (int j = 1; j <= Lg[n]; j++)
+        for (int i = 1; i + (1 << j) - 1 <= n; i++)
+            st[j][i] = cmp(st[j - 1][i], st[j - 1][i + (1 << (j - 1))]);
+}
+
+int inline lca(int x, int y) {
+    if (x == y) return x;
+    x = dfn[x], y = dfn[y];
+    if (x > y) swap(x, y); --y;
+    int k = Lg[y - x + 1];
+    return cmp(st[k][x], st[k][y - (1 << k) + 1]);
+}
+
+void prework() {
+    dfs0(rt);
+    bd();
+}
+
+// Use lca(a, b)

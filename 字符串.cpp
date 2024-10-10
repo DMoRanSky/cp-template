@@ -319,3 +319,43 @@ struct GSAM{
 		last = x;
 	}
 } t;
+
+// 回文自动机
+struct PAM{
+    int n, ch[N][26], fail[N], len[N], sz[N], idx = -1, last;
+    char s[N];
+    void clr() {
+        n = 0;
+        for (int i = 0; i <= idx; i++) {
+            sz[i] = len[i] = fail[i] = 0;
+            for (int j = 0; j < 26; j++)
+                ch[i][j] = 0;
+        }
+        idx = -1;
+        last = 0;
+    }
+ 
+    int newNode(int x) { len[++idx] = x; return idx; }
+    int getFail(int x) {
+        while (s[n - len[x] - 1] != s[n]) x = fail[x];
+        return x;
+    }
+    int insert(char c) {
+        int k = c - 'a';
+        s[++n] = c;
+        int p = getFail(last), x;
+        if (!ch[p][k]) {
+            x = newNode(len[p] + 2);
+            fail[x] = ch[getFail(fail[p])][k];
+            ch[p][k] = x, sz[x] = 1 + sz[fail[x]];
+        } else x = ch[p][k];
+        last = x;
+        return x;
+    }
+    void bd() {
+        // -1:idx jigen
+        newNode(0), newNode(-1);
+        s[0] = '$', fail[0] = 1, last = 0;
+    }
+} pam;
+
