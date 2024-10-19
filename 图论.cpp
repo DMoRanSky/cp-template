@@ -749,3 +749,90 @@ void prework() {
 }
 
 // Use lca(a, b)
+
+// 上下界网络流
+
+struct NF{
+    int n, S, T, head[N], numE = 0, q[N], d[N], a[N], ans;
+    
+    struct E{
+        int next, v, w;
+    } e[M];
+    
+    void inline init(int len, int s, int t) {
+        n = len, S = n + 1, T = n + 2, ans = 0;
+        memset(head, 0, sizeof head);
+        memset(a, 0, sizeof a);
+        numE = 1;
+    }
+    
+    void inline addEdge(int u, int v, int w) {
+        e[++numE] = (E) { head[u], v, w };
+        head[u] = numE;
+    }
+    
+    void inline add(int u, int v, int c, int d) {
+        a[v] += c, a[u] -= c;
+        addEdge(u, v, d - c), addEdge(v, u, 0);
+    }
+    
+    bool inline bfs() {
+        memset(d, 0, sizeof d);
+        int hh = 0, tt = 0; q[0] = S;
+        d[S] = 1;
+        while (hh <= tt) {
+            int u = q[hh++];
+            if (u == T) return true;
+            for (int i = head[u]; i; i = e[i].next) {
+                int v = e[i].v;
+                if (e[i].w && !d[v]) {
+                    d[v] = d[u] + 1;
+                    q[++tt] = v;
+                }
+            }
+        }
+        return false;
+    }
+    
+    int dinic(int u, int flow) {
+        if (u == T) return flow;
+        int rest = flow;
+        for (int i = head[u]; i && rest; i = e[i].next) {
+            int v = e[i].v;
+            if (e[i].w && d[v] == d[u] + 1) {
+                int k = dinic(v, min(rest, e[i].w));
+                if (!k) d[v] = 0;
+                e[i].w -= k, e[i ^ 1].w += k, rest -= k;
+            }
+        }
+        return flow - rest;
+    }
+    
+    void inline prework() {
+        for (int i = 1; i <= n; i++)
+            if (a[i] > 0) addEdge(S, i, a[i]), addEdge(i, S, 0), ans += a[i];
+            else if (a[i] < 0) addEdge(i, T, -a[i]), addEdge(T, i, 0);
+    }
+    
+    int inline run() {
+        int res;
+        addEdge(n, n - 1, INF);
+        addEdge(n - 1, n, 0);
+        while (bfs())
+            while(res = dinic(S, INF)) ans -= res;
+        if (ans) return -1;
+        ans = e[numE].w;
+        e[numE].w = e[numE - 1].w = 0;
+        S = n - 1, T = n;
+        while (bfs())
+            while(res = dinic(S, INF)) ans += res;
+        return ans; 
+    }
+    
+} t;
+
+int S = n + m + 1, T = n + m + 2;
+t.init(T, S, T);
+t.add(u, v, c, d);
+t.prework();
+output:: t.run()
