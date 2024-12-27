@@ -704,43 +704,6 @@ LL inline cross(PII a, PII b, PII c) {
 	return cross(u, v);
 }
 
-// 动态平衡树
-
-struct Hull {
-	SI su, sd;
-	bool inline query(SI &s, PII u, int o) {
-		SIT l = s.upper_bound(u), r = s.lower_bound(u);
-		if (r == s.end() || l == s.begin()) return false;
-		l--;
-		return cross(*l, u, *r) * o <= 0;
-	}
-	void inline insert(SI &s, PII u, int o) {
-		if (query(s, u, o)) return;
-		SIT it = s.insert(u).first;
-		while (1) {
-			SIT mid = it;
-			if (mid == s.begin()) break; --mid;
-			SIT l = mid;
-			if (l == s.begin()) break; --l;
-			if (cross(*l, *mid, u) * o >= 0) break; 
-			s.erase(mid);
-		}
-		while (1) {
-			SIT mid = it; ++mid;
-			if (mid == s.end()) break; 
-			SIT r = mid; ++r;
-			if (r == s.end()) break;
-			if (cross(u, *mid, *r) * o >= 0) break; 
-			s.erase(mid);
-		}
-	}
-	void inline ins(PII u) {
-		insert(su, u, 1), insert(sd, u, -1);
-	}
-	int inline chk(PII u) {
-		return query(su, u, 1) && query(sd, u, -1);
-	}
-} t;
 
 // 珂朵莉树？？
 
@@ -811,17 +774,25 @@ struct Hash{
 
 // 李超树
 
+struct Line{
+    LL k, b;
+};
+
+struct Tree{
+    int l, r;
+    Line v;
+} t[N * 22];
+
+int idx;
+
 struct LC{
-	struct Tree{
-		int l, r;
-		Line v;
-	} t[N << 2];
+	// 最小值 / 下凸壳
 	LL inline calc(Line e, LL x) {
 		return e.k * x + e.b;
 	}
-	int idx, rt;
+	int rt;
 	void inline clr() {
-		idx = 0; rt = 0;
+		rt = 0;
 	}
 	// 这里写法非常简洁的原因是，让计算机人工帮你判断了单调 / 需要 upd 的位置，事实上只会走一边。
 	void inline ins(int &p, int l, int r, Line e) {
@@ -842,8 +813,11 @@ struct LC{
 		else chkMin(ret, ask(t[p].r, mid + 1, r, x));
 		return ret;
 	}
+    LL ask(int x) {
+        return ask(rt, 1, LEN, x);
+    }
 	
-} ;
+} lc[N];
 
 // 全局平衡二叉树
 

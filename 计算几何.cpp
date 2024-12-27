@@ -1,10 +1,9 @@
 
 
 const double eps = 1e-4;
+
+
 typedef pair<double, double> PDD;
-struct Line{
-    PDD s, t;
-};
 
 int inline cmp(double x, double y) {
     if (fabs(x - y) < eps) return 0;
@@ -16,6 +15,7 @@ PDD operator - (const PDD &a, const PDD &b) { return make_pair(a.fi - b.fi, a.se
 PDD operator + (const PDD &a, const PDD &b) { return make_pair(a.fi+ b.fi, a.se+ b.se); }
 PDD operator / (const PDD &a, double b) { return make_pair(a.fi / b, a.se / b); }
 PDD operator * (const PDD &a, double b) { return make_pair(a.fi * b, a.se * b); }
+double operator * (PDD a, PDD b) { return a.fi * b.se - a.se * b.fi; }
 double inline area(PDD a, PDD b, PDD c) { return cross(b - a, c - a); }
 double inline dot(PDD a, PDD b) { return a.fi * b.fi + a.se * b.se; }
 double inline len(PDD a) { return sqrt(dot(a, a)); }
@@ -33,17 +33,19 @@ int sign(double fi) {
     return 1;
 }
 
+bool segLine(PDD a, PDD b, PDD c, PDD d){//直线ab与线段cd相交 
+    return cross(b - a, c - a) * cross(b - a, d - a) <= 0;
+} 
+
 bool segInter(PDD a1, PDD a2, PDD b1, PDD b2) {
     double c1 = cross(a2 - a1, b1 - a1), c2 = cross(a2 - a1, b2 - a1);
     double c3 = cross(b2 - b1, a2 - b1), c4 = cross(b2 - b1, a1 - b1);
     return sign(c1) * sign(c2) <= 0 && sign(c3) * sign(c4) <= 0;
 }
 
-bool cmp2 (const Line &a, const Line &b) {
-    double A = getAngle(a), B = getAngle(b);
-    if (A != B) return A < B;
-    else return area(a.s, a.t, b.t) < 0;
-}
+
+
+// 别用这个 或者要 p + vx, q + wx
 
 PDD getInter(PDD p, PDD v, PDD q, PDD w) {
     PDD u = p - q;
@@ -58,40 +60,42 @@ bool inline Right(Line a, Line b, Line c) {
     return area(a.s, a.t, u) <= 0;
 }
 
-// 凸包
+// 点到线段距离
 
-void inline andrew() {
-    sort(p + 1, p + 1 + n);
-    for (int i = 1; i <= n; i++) {
-        while (top > 1 && area(p[s[top - 1]], p[s[top]], p[i]) < 0) {
-            if (area(p[s[top - 1]], p[s[top]], p[i]) <= 0) st[s[top--]] = false;
-            else top--;
-        }
-        st[i] = true, s[++top] = i;
+double getD(PDD a, PDD u, PDD v) {
+    double w = min(dis(a, u), dis(a, v));
+    double c = dot(a - u, v - u);
+    double t = dis(u, v);
+    c /= t;
+    if (cmp(c, 0) >= 0 && cmp(c, t) <= 0) {
+        PDD v1 = v - u, v2 = a - u;
+        w = cross(v1, v2) / len(v1);
     }
-    st[1] = false;
-    for (int i = n; i; i--) {
-        if (!st[i]) {
-            while (top > 1 && area(p[s[top - 1]], p[s[top]], p[i]) <= 0) 
-                st[s[top--]] = false;
-            st[i] = true, s[++top] = i;
-        }
-    }
-    for (int i = 0; i < top; i++) s[i] = s[i + 1];
-    top--;
+    return fabs(w);
 }
+
 
 struct Line{
     PDD s, t;
     int id;
 } e[N];
-
 // 半平面交
-double HPI() {
+PDD vec(Line x) { return x.t - x.s; }
+bool isPara(Line x, Line y){return fabs(vec(x) * vec(y)) < eps;}//判断线平行
+bool paraS(Line a, Line b) { return isPara(a, b) && dot(vec(a), vec(b)) > 0; } // 射线同向
+int half(PDD x){return x.se < 0 || (x.se == 0 && x.fi <= 0); }
+bool cmp(PDD a, PDD b) { return half(a) == half(b) ? cross(a, b) > 0 : half(b); }
+bool cmp2 (const Line &a, const Line &b) {
+    if (paraS(a, b)) return area(a.s, a.t, b.t) < 0;
+    return cmp(vec(a), vec(b));
+}
+vector<PDD> HPI(vector<Line> a) {
+    int n = a.size();
+    for (int i = 1; i <= n; i++) e[i] = a[i - 1];
     sort(e + 1, e + 1 + n, cmp2);
     int hh = 0, tt = -1;
     for (int i = 1; i <= n; i++) {
-        if (i && getAngle(e[i]) == getAngle(e[i - 1])) continue;
+        if (i && paraS(e[i], e[i - 1])) continue;
         while (hh < tt && Right(e[i], e[q[tt - 1]], e[q[tt]])) tt--;
         while (hh < tt && Right(e[i], e[q[hh]], e[q[hh + 1]])) hh++;
         q[++tt] = i;
@@ -99,20 +103,18 @@ double HPI() {
     while (hh < tt && Right(e[q[hh]], e[q[tt - 1]], e[q[tt]])) tt--;
     while (hh < tt && Right(e[q[tt]], e[q[hh]], e[q[hh + 1]])) hh++;
     q[++tt] = q[hh];
-    tot = 0;
+    if (tt - hh <= 2) return {};
+    vector<PDD> ret;
     for (int i = hh; i < tt; i++)
-        p[++tot] = getInter(e[q[i]], e[q[i + 1]]);
-    double res = 0;
-    for (int i = 1; i < tot; i++)
-        res += area(p[1], p[i], p[i + 1]);
-    return res / 2;
+        ret.pb(getInter(e[q[i]], e[q[i + 1]]));
+    return ret;
 }
+// 最小圆覆盖
 
 Point inline getCircle(Point a, Point b, Point c) {
     return Inter((a + b) / 2, rotate(b - a, PI / 2), (a + c) / 2, rotate(c - a, PI / 2));
 }
 
-// 最小圆覆盖
 
 void inline minCircle(PDD a[]) {
     random_shuffle(a + 1, a + 1 + n);
@@ -151,19 +153,7 @@ double inline asr(double l, double r) {
     else return asr(l, mid) + asr(mid, r);
 }
 
-// https://codeforces.com/contest/1284/problem/E 的怨念 不丢精度的极角排序
 
-LL inline cross(PII x, PII y) {
-    return 1ll * x.fi * y.se - 1ll * x.se * y.fi;
-}
-
-int inline quad(PII x) {
-    if (x.fi >= 0 && x.se >= 0) return 1;
-    if (x.fi <= 0 && x.se >= 0) return 2;
-    if (x.fi <= 0 && x.se <= 0) return 3;
-    if (x.fi >= 0 && x.se <= 0) return 4;
-    return 0;
-}
 
 // PII andrew + mincowf
 
@@ -237,3 +227,63 @@ vector<PII> calc(vector<PII> a, vector<PII> b) {
     c.pop_back();
     return c;
 }
+
+
+
+// 凸包面积
+
+double area(vector<PDD> a) {
+    int n = a.size();
+    double ret = 0;
+    for (int i = 0; i < n; i++) {
+        ret += cross(a[i], a[(i + 1) % n]);
+    }
+    return fabs(ret / 2);
+}
+
+
+// 动态凸包
+
+struct Hull {
+    SI su, sd;
+    bool inline query(SI &s, PII u, int o) {
+        SIT l = s.upper_bound(u), r = s.lower_bound(u);
+        if (r == s.end() || l == s.begin()) return false;
+        l--;
+        return cross(*l, u, *r) * o <= 0;
+    }
+    void inline insert(SI &s, PII u, int o) {
+        if (query(s, u, o)) return;
+        SIT it = s.insert(u).first;
+        while (1) {
+            SIT mid = it;
+            if (mid == s.begin()) break; --mid;
+            SIT l = mid;
+            if (l == s.begin()) break; --l;
+            if (cross(*l, *mid, u) * o >= 0) break; 
+            s.erase(mid);
+        }
+        while (1) {
+            SIT mid = it; ++mid;
+            if (mid == s.end()) break; 
+            SIT r = mid; ++r;
+            if (r == s.end()) break;
+            if (cross(u, *mid, *r) * o >= 0) break; 
+            s.erase(mid);
+        }
+    }
+    void inline ins(PII u) {
+        insert(su, u, 1), insert(sd, u, -1);
+    }
+    
+    // 0 外面 ： 1 线上 ： 2 里面
+    int inline chk(PII u) {
+        bool in = query(su, u, 1) && query(sd, u, -1);
+        if (in) {
+            if (query(su, u, -1)) return 1;
+            if (query(sd, u, 1)) return 1;
+            return 2;
+        }
+        return 0;
+    }
+} t;
